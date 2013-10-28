@@ -30,15 +30,61 @@ class FeatureContext extends BehatContext
         // Initialize your context here
     }
 
-//
-// Place your definition and hook methods here:
-//
-//    /**
-//     * @Given /^I have done something with "([^"]*)"$/
-//     */
-//    public function iHaveDoneSomethingWith($argument)
-//    {
-//        doSomethingWith($argument);
-//    }
-//
+    /**
+     * @Given /^User has an Account called "([^"]*)"$/
+     */
+    public function userHasAnAccountCalled($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given /^Debit of the "([^"]*)" Account is "([^"]*)"$/
+     */
+    public function debitOfTheAccountIs($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given /^Credit of the "([^"]*)" Account is "([^"]*)"$/
+     */
+    public function creditOfTheAccountIs($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^User adds "([^"]*)" funds to "([^"]*)" Account$/
+     */
+    public function userAddsFundsToAccount($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then /^Debit of the "([^"]*)" Account should be equal to "([^"]*)"$/
+     */
+    public function debitOfTheAccountShouldBeEqualTo($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given /^Credit of the "([^"]*)" Account should be equal to "([^"]*)"$/
+     */
+    public function creditOfTheAccountShouldBeEqualTo($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^user registers "([^"]*)" of expense from "([^"]*)" Account to "([^"]*)"$/
+     */
+    public function userRegistersOfExpenseFromAccountTo($arg1, $arg2, $arg3)
+    {
+        throw new PendingException();
+    }
+
+
 }
