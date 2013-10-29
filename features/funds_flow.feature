@@ -31,7 +31,7 @@ Feature: Funds Flow
         And Debit of the "Expenses" Account is "0 USD"
         And Credit of the "Expenses" Account is "0 USD"
 
-        When user registers "5 USD" of expense from "Incomes" Account to "Expense"
+        When user registers "5 USD" of expense from "Incomes" Account to "Expenses"
 
         Then Debit of the "Incomes" Account should be equal to "5 USD"
         And Credit of the "Incomes" Account should be equal to "5 USD"

@@ -11,13 +11,14 @@ namespace Accountancy\Features\FundsFlow;
  */
 class RegisterExpense
 {
-	protected $user;
-	/**
-	* Sets the User for which expense will be registered
-	* @param \Accountancy\Entity\User $user
-	*
-	* @return RegisterExpense
-	*/
+    protected $user;
+
+    /**
+    * Sets the User for which expense will be registered
+    * @param \Accountancy\Entity\User $user
+    *
+    * @return RegisterExpense
+    */
     public function setUser($user)
     {
         $this->user = $user;
@@ -26,13 +27,16 @@ class RegisterExpense
     }
 
     /**
-     * Registers expense for account
+     * Registers income for account
      *
-     * @param string $accountId
+     * @param string $accountFromId
+     * @param string $accountToId
      * @param double $value
      */
-    public function registerExpense($accountId, $value)
+    public function registerExpense($accountFromId, $accountToId, $value)
     {
-        $this->user->accounts[$accountId]->debit = $value;
+        $this->user->accounts[$accountToId]->credit += $value;
+        $this->user->accounts[$accountFromId]->debit += $value;
+        $this->user->accounts[$accountFromId]->credit -= $value;
     }
 }

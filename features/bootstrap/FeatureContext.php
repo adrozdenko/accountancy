@@ -8,6 +8,7 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Accountancy\Entity;
 use Accountancy\Features\FundsFlow\RegisterIncome;
+use Accountancy\Features\FundsFlow\RegisterExpense;
 
 require_once __DIR__ . "/../../vendor/autoload.php";    
 require_once 'PHPUnit/Autoload.php';
@@ -94,9 +95,12 @@ class FeatureContext extends BehatContext
     /**
      * @When /^user registers "([^"]*)" of expense from "([^"]*)" Account to "([^"]*)"$/
      */
-    public function userRegistersOfExpenseFromAccountTo($arg1, $arg2, $arg3)
+    public function userRegistersOfExpenseFromAccountTo($value, $accountFromId, $accountToId)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        $useCase = new RegisterExpense();
+        $useCase->setUser($this->user)
+            ->registerExpense($accountFromId, $accountToId, $value );
     }
 
 
