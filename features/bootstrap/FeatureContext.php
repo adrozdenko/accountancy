@@ -10,12 +10,9 @@ use Accountancy\Entity;
 use Accountancy\Features\FundsFlow\RegisterIncome;
 
 require_once __DIR__ . "/../../vendor/autoload.php";    
-//
-// Require 3rd-party libraries here:
-//
-//   require_once 'PHPUnit/Autoload.php';
-   require_once 'PHPUnit/Framework/Assert/Functions.php';
-//
+require_once 'PHPUnit/Autoload.php';
+require_once 'PHPUnit/Framework/Assert/Functions.php';
+
 
 /**
  * Features context.
