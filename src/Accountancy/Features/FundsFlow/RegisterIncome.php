@@ -34,6 +34,6 @@ class RegisterIncome
      */
     public function registerIncome($accountId, $value)
     {
-        $this->user->accounts[$accountId]->credit = $value;
+        $this->user->accounts[$accountId]->credit += $value;
     }
 }

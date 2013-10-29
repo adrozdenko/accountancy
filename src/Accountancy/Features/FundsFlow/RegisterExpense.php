@@ -13,7 +13,7 @@ class RegisterExpense
 {
 	protected $user;
 	/**
-	* Sets the User for which income will be registered
+	* Sets the User for which expense will be registered
 	* @param \Accountancy\Entity\User $user
 	*
 	* @return RegisterExpense
