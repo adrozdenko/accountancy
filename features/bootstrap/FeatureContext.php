@@ -6,12 +6,15 @@ use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
+use Accountancy\Entity;
+use Accountancy\Features\FundsFlow\RegisterIncome;
 
+require_once __DIR__ . "/../../vendor/autoload.php";    
 //
 // Require 3rd-party libraries here:
 //
 //   require_once 'PHPUnit/Autoload.php';
-//   require_once 'PHPUnit/Framework/Assert/Functions.php';
+   require_once 'PHPUnit/Framework/Assert/Functions.php';
 //
 
 /**
@@ -19,6 +22,8 @@ use Behat\Gherkin\Node\PyStringNode,
  */
 class FeatureContext extends BehatContext
 {
+    protected $user;
+
     /**
      * Initializes context.
      * Every scenario gets it's own context object.
@@ -27,55 +32,66 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        // Initialize your context here
+        $this->user = new Entity\User;
     }
 
     /**
      * @Given /^User has an Account called "([^"]*)"$/
      */
-    public function userHasAnAccountCalled($arg1)
+    public function userHasAnAccountCalled($name)
     {
-        throw new PendingException();
+        $account = new Entity\Account;
+        $account->id = $name;
+        $account->name = $name;
+        $this->user->accounts[$name] = $account;
     }
 
     /**
      * @Given /^Debit of the "([^"]*)" Account is "([^"]*)"$/
      */
-    public function debitOfTheAccountIs($arg1, $arg2)
+    public function debitOfTheAccountIs($name, $value)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        $this->user->accounts[$name]->debit = $value;
     }
 
     /**
      * @Given /^Credit of the "([^"]*)" Account is "([^"]*)"$/
      */
-    public function creditOfTheAccountIs($arg1, $arg2)
+    public function creditOfTheAccountIs($name, $value)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        $this->user->accounts[$name]->credit = $value;
     }
 
     /**
      * @When /^User adds "([^"]*)" funds to "([^"]*)" Account$/
      */
-    public function userAddsFundsToAccount($arg1, $arg2)
+    public function userAddsFundsToAccount($value, $accountId)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        
+        $useCase = new RegisterIncome();
+        $useCase->setUser($this->user)
+            ->registerIncome($accountId, $value);
     }
 
     /**
      * @Then /^Debit of the "([^"]*)" Account should be equal to "([^"]*)"$/
      */
-    public function debitOfTheAccountShouldBeEqualTo($arg1, $arg2)
+    public function debitOfTheAccountShouldBeEqualTo($name, $value)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        assertEquals($value, $this->user->accounts[$name]->debit);
     }
 
     /**
      * @Given /^Credit of the "([^"]*)" Account should be equal to "([^"]*)"$/
      */
-    public function creditOfTheAccountShouldBeEqualTo($arg1, $arg2)
+    public function creditOfTheAccountShouldBeEqualTo($name, $value)
     {
-        throw new PendingException();
+        list($value, $currency) = explode(" ", $value);
+        assertEquals($value, $this->user->accounts[$name]->credit);
     }
 
     /**

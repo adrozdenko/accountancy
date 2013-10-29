@@ -11,4 +11,5 @@ namespace Accountancy\Entity;
  */
 class User
 {
+    public $accounts = array();
 }
