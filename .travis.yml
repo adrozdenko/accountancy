@@ -8,5 +8,6 @@ before_script:
   
 script:
   - bin/behat
-  - bin/phpcs src/ --standard=vendor/instaclick/symfony2-coding-standard/Symfony2
+  - bin/phpunit
+  - bin/phpcs src/ test/src/ --standard=vendor/instaclick/symfony2-coding-standard/Symfony2
   
