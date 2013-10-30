@@ -23,85 +23,51 @@ class FeatureContext extends BehatContext
     protected $user;
 
     /**
-     * Initializes context.
-     * Every scenario gets it's own context object.
-     *
-     * @param array $parameters context parameters (set them up through behat.yml)
+     * @Given /^categories of Expense:$/
      */
-    public function __construct(array $parameters)
+    public function categoriesOfExpense(TableNode $table)
     {
-        $this->user = new Entity\User;
+        throw new PendingException();
     }
 
     /**
-     * @Given /^User has an Account called "([^"]*)"$/
+     * @Given /^amount of money on Users account is "([^"]*)"$/
      */
-    public function userHasAnAccountCalled($name)
+    public function amountOfMoneyOnUsersAccountIs($arg1)
     {
-        $account = new Entity\Account;
-        $account->id = $name;
-        $account->name = $name;
-        $this->user->accounts[$name] = $account;
+        throw new PendingException();
     }
 
     /**
-     * @Given /^Debit of the "([^"]*)" Account is "([^"]*)"$/
+     * @When /^User registers "([^"]*)" Expense for Category "([^"]*)"$/
      */
-    public function debitOfTheAccountIs($name, $value)
+    public function userRegistersExpenseForCategory($arg1, $arg2)
     {
-        list($value, $currency) = explode(" ", $value);
-        $this->user->accounts[$name]->debit = $value;
+        throw new PendingException();
     }
 
     /**
-     * @Given /^Credit of the "([^"]*)" Account is "([^"]*)"$/
+     * @Then /^amount of money on Users account should be "([^"]*)"$/
      */
-    public function creditOfTheAccountIs($name, $value)
+    public function amountOfMoneyOnUsersAccountShouldBe($arg1)
     {
-        list($value, $currency) = explode(" ", $value);
-        $this->user->accounts[$name]->credit = $value;
+        throw new PendingException();
     }
 
     /**
-     * @When /^User adds "([^"]*)" funds to "([^"]*)" Account$/
+     * @Given /^categories of Income:$/
      */
-    public function userAddsFundsToAccount($value, $accountId)
+    public function categoriesOfIncome(TableNode $table)
     {
-        list($value, $currency) = explode(" ", $value);
-        
-        $useCase = new RegisterIncome();
-        $useCase->setUser($this->user)
-            ->registerIncome($accountId, $value);
+        throw new PendingException();
     }
 
     /**
-     * @Then /^Debit of the "([^"]*)" Account should be equal to "([^"]*)"$/
+     * @When /^User registers "([^"]*)" Income for Category "([^"]*)"$/
      */
-    public function debitOfTheAccountShouldBeEqualTo($name, $value)
+    public function userRegistersIncomeForCategory($arg1, $arg2)
     {
-        list($value, $currency) = explode(" ", $value);
-        assertEquals($value, $this->user->accounts[$name]->debit);
+        throw new PendingException();
     }
-
-    /**
-     * @Given /^Credit of the "([^"]*)" Account should be equal to "([^"]*)"$/
-     */
-    public function creditOfTheAccountShouldBeEqualTo($name, $value)
-    {
-        list($value, $currency) = explode(" ", $value);
-        assertEquals($value, $this->user->accounts[$name]->credit);
-    }
-
-    /**
-     * @When /^user registers "([^"]*)" of expense from "([^"]*)" Account to "([^"]*)"$/
-     */
-    public function userRegistersOfExpenseFromAccountTo($value, $accountFromId, $accountToId)
-    {
-        list($value, $currency) = explode(" ", $value);
-        $useCase = new RegisterExpense();
-        $useCase->setUser($this->user)
-            ->registerExpense($accountFromId, $accountToId, $value );
-    }
-
 
 }
