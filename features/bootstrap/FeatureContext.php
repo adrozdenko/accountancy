@@ -7,7 +7,7 @@ use Behat\Behat\Context\ClosuredContextInterface,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Accountancy\Entity;
-use Accountancy\Features\RegisterIncome;
+use Accountancy\Features\RegisterOperation;
 
 
 require_once __DIR__ . "/../../vendor/autoload.php";
@@ -28,59 +28,69 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^User has categories of Expense:$/
+     * @Given /^User has categories:$/
      */
-    public function userHasCategoriesOfExpense(TableNode $categoriesOfExpenseTable)
+    public function userHasCategories(TableNode $categories)
     {
-        throw new PendingException();
-    }
-
-    /**
-     * @Given /^User has categories of Income:$/
-     */
-    public function userHasCategoriesOfIncome(TableNode $categoriesOfIncomeTable)
-    {
-        foreach ($categoriesOfIncomeTable->getHash() as $categoryOfIncome) {
-            $this->user->categoriesOfIncome[$categoryOfIncome['categoryId']] = $categoryOfIncome['categoryName'];
+        foreach ($categories->getHash() as $category) {
+            $this->user->categories[$category['categoryId']] = $category['categoryName'];
         }
     }
 
     /**
-     * @Given /^amount of money on Users account is "([^"]*)"$/
+     * @Given /^User has payees:$/
      */
-    public function amountOfMoneyOnUsersAccountIs($valueAndCurrency)
+    public function userHasPayees(TableNode $payees)
     {
-        list($value, $currency) = explode(' ', $valueAndCurrency);
+        foreach ($payees->getHash() as $payee) {
+            $this->user->payees[$payee['payeeId']] = $payee['payeeName'];
+        }
+    }
+
+    /**
+     * @Given /^amount of money on Users balance is "([^"]*)"$/
+     */
+    public function amountOfMoneyOnUsersBalanceIs($value)
+    {
         $this->user->balance = $value;
     }
 
     /**
-     * @When /^User registers "([^"]*)" Expense for Category "([^"]*)"$/
+     * @When /^User registers "([^"]*)" Expense for Category "([^"]*)" and Payee "([^"]*)"$/
      */
-    public function userRegistersExpenseForCategory($valueAndCurrency, $categoryId)
+    public function userRegistersExpenseForCategory($value, $categoryId, $payeeId)
     {
-        throw new PendingException();
+        $operation = new Entity\Operation();
+        $operation->type = Entity\Operation::OP_TYPE_EXPENSE;
+        $operation->value = $value;
+
+        $useCase = new RegisterOperation();
+        $useCase->setUser($this->user)
+                ->setOperation($operation)
+                ->register();
     }
 
     /**
-     * @Then /^amount of money on Users account should be "([^"]*)"$/
+     * @Then /^amount of money on Users balance should be "([^"]*)"$/
      */
-    public function amountOfMoneyOnUsersAccountShouldBe($valueAndCurrency)
+    public function amountOfMoneyOnUsersBalanceShouldBe($value)
     {
-        list($value, $currency) = explode(' ', $valueAndCurrency);
         assertEquals($value, $this->user->balance);
     }
 
     /**
-     * @When /^User registers "([^"]*)" Income for Category "([^"]*)"$/
+     * @When /^User registers "([^"]*)" Income for Category "([^"]*)" and Payee "([^"]*)"$/
      */
-    public function userRegistersIncomeForCategory($valueAndCurrency, $categoryId)
+    public function userRegistersIncomeForCategory($value, $categoryId, $payeeId)
     {
-        list($value, $currency) = explode(' ', $valueAndCurrency);
+        $operation = new Entity\Operation();
+        $operation->type = Entity\Operation::OP_TYPE_INCOME;
+        $operation->value = $value;
 
-        $useCase = new RegisterIncome();
-        $useCase->setUser($this->user);
-        $useCase->registerIncome($value, $categoryId);
+        $useCase = new RegisterOperation();
+        $useCase->setUser($this->user)
+                ->setOperation($operation)
+                ->register();
     }
 
 }

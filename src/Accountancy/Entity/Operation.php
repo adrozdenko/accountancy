@@ -18,6 +18,11 @@ class Operation
     public $type;
     public $value;
 
+    /**
+     * Applies value
+     * @param  double $balance
+     * @return double
+     */
     public function apply($balance) {
 
         switch ($this->type) {
