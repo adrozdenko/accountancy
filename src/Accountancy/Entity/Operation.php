@@ -20,11 +20,13 @@ class Operation
 
     /**
      * Applies value
-     * @param  double $balance
+     *
+     * @param double $balance
+     *
      * @return double
      */
-    public function apply($balance) {
-
+    public function apply($balance)
+    {
         switch ($this->type) {
             case self::OP_TYPE_INCOME:
                 $balance += $this->value;

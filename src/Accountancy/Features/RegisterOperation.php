@@ -50,7 +50,8 @@ class RegisterOperation
      *
      * @return void
      */
-    public function register() {
+    public function register()
+    {
         $this->user->registerOperation($this->operation);
     }
 }

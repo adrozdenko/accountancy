@@ -20,10 +20,13 @@ class User
 
     /**
      * Registers operation
-     * @param  Operation $operation
+     *
+     * @param Operation $operation
+     *
      * @return void
      */
-    public function registerOperation(Operation $operation) {
+    public function registerOperation(Operation $operation)
+    {
         $this->balance = $operation->apply($this->balance);
     }
 }
