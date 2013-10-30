@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  */
 
 namespace Accountancy\Entity;
@@ -11,5 +11,7 @@ namespace Accountancy\Entity;
  */
 class User
 {
+    public $categoriesOfIncome = array();
 
+    public $balance = 0;
 }
