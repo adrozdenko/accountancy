@@ -6,91 +6,123 @@ use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
-use Accountancy\Entity;
-use Accountancy\Features\RegisterOperation;
 
-
-require_once __DIR__ . "/../../vendor/autoload.php";
-require_once 'PHPUnit/Autoload.php';
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-
+//
+// Require 3rd-party libraries here:
+//
+//   require_once 'PHPUnit/Autoload.php';
+//   require_once 'PHPUnit/Framework/Assert/Functions.php';
+//
 
 /**
  * Features context.
  */
 class FeatureContext extends BehatContext
 {
-    protected $user;
-
-    public function __construct()
+    /**
+     * Initializes context.
+     * Every scenario gets it's own context object.
+     *
+     * @param array $parameters context parameters (set them up through behat.yml)
+     */
+    public function __construct(array $parameters)
     {
-        $this->user = new Entity\User;
+        // Initialize your context here
     }
 
     /**
-     * @Given /^User has categories:$/
+     * @Given /^I have Accounts:$/
      */
-    public function userHasCategories(TableNode $categories)
+    public function iHaveAccounts(TableNode $table)
     {
-        foreach ($categories->getHash() as $category) {
-            $this->user->categories[$category['categoryId']] = $category['categoryName'];
-        }
+        throw new PendingException();
     }
 
     /**
-     * @Given /^User has payees:$/
+     * @Given /^I have Categories:$/
      */
-    public function userHasPayees(TableNode $payees)
+    public function iHaveCategories(TableNode $table)
     {
-        foreach ($payees->getHash() as $payee) {
-            $this->user->payees[$payee['payeeId']] = $payee['payeeName'];
-        }
+        throw new PendingException();
     }
 
     /**
-     * @Given /^amount of money on Users balance is "([^"]*)"$/
+     * @Given /^I have Counterparties:$/
      */
-    public function amountOfMoneyOnUsersBalanceIs($value)
+    public function iHaveCounterparties(TableNode $table)
     {
-        $this->user->balance = $value;
+        throw new PendingException();
     }
 
     /**
-     * @When /^User registers "([^"]*)" Expense for Category "([^"]*)" and Payee "([^"]*)"$/
+     * @When /^I register "([^"]*)" Expense for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
      */
-    public function userRegistersExpenseForCategory($value, $categoryId, $payeeId)
+    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
     {
-        $operation = new Entity\Operation();
-        $operation->type = Entity\Operation::OP_TYPE_EXPENSE;
-        $operation->value = $value;
-
-        $useCase = new RegisterOperation();
-        $useCase->setUser($this->user)
-                ->setOperation($operation)
-                ->register();
+        throw new PendingException();
     }
 
     /**
-     * @Then /^amount of money on Users balance should be "([^"]*)"$/
+     * @Then /^My Accounts should be:$/
      */
-    public function amountOfMoneyOnUsersBalanceShouldBe($value)
+    public function myAccountsShouldBe(TableNode $table)
     {
-        assertEquals($value, $this->user->balance);
+        throw new PendingException();
     }
 
     /**
-     * @When /^User registers "([^"]*)" Income for Category "([^"]*)" and Payee "([^"]*)"$/
+     * @Then /^I should receive \((\d+)\) error$/
      */
-    public function userRegistersIncomeForCategory($value, $categoryId, $payeeId)
+    public function iShouldReceiveError($arg1)
     {
-        $operation = new Entity\Operation();
-        $operation->type = Entity\Operation::OP_TYPE_INCOME;
-        $operation->value = $value;
-
-        $useCase = new RegisterOperation();
-        $useCase->setUser($this->user)
-                ->setOperation($operation)
-                ->register();
+        throw new PendingException();
     }
 
+    /**
+     * @When /^I add "([^"]*)" funds to Account (\d+)$/
+     */
+    public function iAddFundsToAccount($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I add "([^"]*)" funds to Account "([^"]*)"$/
+     */
+    public function iAddFundsToAccount2($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I register "([^"]*)" Income for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
+     */
+    public function iRegisterIncomeForAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I register Transfer from Account “(\d+)” to Account “(\d+)” and Category “(\d+)” and Counterparty “(\d+)”$/
+     */
+    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I register (\d+)\.(\d+) Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
+     */
+    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty2($arg1, $arg2, $arg3, $arg4, $arg5, $arg6)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I register -(\d+)\.(\d+) Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
+     */
+    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty3($arg1, $arg2, $arg3, $arg4, $arg5, $arg6)
+    {
+        throw new PendingException();
+    }
 }
