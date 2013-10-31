@@ -1,7 +1,7 @@
 Feature: Register Income
-    In order to control my income transaction
-    As a User
-    I want to be able register Income transaction
+In order to control my income transaction
+As a User
+I want to be able register Income transaction
     Scenario: I register Income transaction
     	Given I have Accounts:
      	| id | name | balance |
@@ -29,9 +29,9 @@ Feature: Register Income
     	And I have Counterparties:
      	| id | name |
      	| 1  | Baz  |
-    	 
+
     	When  I register <sum> Income for Account <account-id> and Category <category-id> and Counterparty <counterparty-id>
-   	 
+
     	Then I should receive <error-message> error
     	And My Accounts should be:
      	| id | name | balance |

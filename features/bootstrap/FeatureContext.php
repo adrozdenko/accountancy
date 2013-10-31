@@ -33,7 +33,7 @@ class FeatureContext extends BehatContext
     /**
      * @Given /^I have Accounts:$/
      */
-    public function iHaveAccounts(TableNode $table)
+    public function iHaveAccounts(TableNode $accountsTable)
     {
         throw new PendingException();
     }
@@ -41,7 +41,7 @@ class FeatureContext extends BehatContext
     /**
      * @Given /^I have Categories:$/
      */
-    public function iHaveCategories(TableNode $table)
+    public function iHaveCategories(TableNode $categoriesTable)
     {
         throw new PendingException();
     }
@@ -49,7 +49,7 @@ class FeatureContext extends BehatContext
     /**
      * @Given /^I have Counterparties:$/
      */
-    public function iHaveCounterparties(TableNode $table)
+    public function iHaveCounterparties(TableNode $counterpartiesTable)
     {
         throw new PendingException();
     }
@@ -57,7 +57,7 @@ class FeatureContext extends BehatContext
     /**
      * @When /^I register "([^"]*)" Expense for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
      */
-    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
+    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
     {
         throw new PendingException();
     }
@@ -65,7 +65,7 @@ class FeatureContext extends BehatContext
     /**
      * @Then /^My Accounts should be:$/
      */
-    public function myAccountsShouldBe(TableNode $table)
+    public function myAccountsShouldBe(TableNode $accountsTable)
     {
         throw new PendingException();
     }
@@ -73,7 +73,7 @@ class FeatureContext extends BehatContext
     /**
      * @Then /^I should receive \((\d+)\) error$/
      */
-    public function iShouldReceiveError($arg1)
+    public function iShouldReceiveError($errorMessage)
     {
         throw new PendingException();
     }
@@ -81,15 +81,7 @@ class FeatureContext extends BehatContext
     /**
      * @When /^I add "([^"]*)" funds to Account (\d+)$/
      */
-    public function iAddFundsToAccount($arg1, $arg2)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I add "([^"]*)" funds to Account "([^"]*)"$/
-     */
-    public function iAddFundsToAccount2($arg1, $arg2)
+    public function iAddFundsToAccount($amount,  $accountId)
     {
         throw new PendingException();
     }
@@ -97,31 +89,15 @@ class FeatureContext extends BehatContext
     /**
      * @When /^I register "([^"]*)" Income for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
      */
-    public function iRegisterIncomeForAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
+    public function iRegisterIncomeForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
     {
         throw new PendingException();
     }
 
     /**
-     * @When /^I register Transfer from Account “(\d+)” to Account “(\d+)” and Category “(\d+)” and Counterparty “(\d+)”$/
+     * @When /^I register "([^"]*)" Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
      */
-    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($arg1, $arg2, $arg3, $arg4)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register (\d+)\.(\d+) Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty2($arg1, $arg2, $arg3, $arg4, $arg5, $arg6)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register -(\d+)\.(\d+) Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty3($arg1, $arg2, $arg3, $arg4, $arg5, $arg6)
+    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $accountFromId, $accountToId, $categoryId, $counterpartyId)
     {
         throw new PendingException();
     }

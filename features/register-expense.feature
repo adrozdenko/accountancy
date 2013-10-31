@@ -1,7 +1,7 @@
 Feature: Register Expense
-    In order to track my expenses
-    As a User
-    I want to be able register Expense Transactions
+In order to track my expenses
+As a User
+I want to be able register Expense Transactions
     Scenario: I register Expense Transaction
     	Given I have Accounts:
      	| id | name | balance |
@@ -25,7 +25,7 @@ Feature: Register Expense
      	| 1  | Foo  | 15.14   |
     	And I have Categories:
      	| id | name |
-     	| 1  | Bar  
+     	| 1  | Bar
     	And I have Counterparties:
      	| id | name |
      	| 1  | Baz  |
@@ -45,4 +45,4 @@ Feature: Register Expense
      	|"-5.10"  | 1      	   | 1           	 | 1       	   |(4)        	   |
      	| "0.00"  | 1      	   | 1           	 | 1       	   |(4)        	   |
      	| "30.00" | 1      	   | 1           	 | 1       	   |(5)        	   |
-    	 
+
