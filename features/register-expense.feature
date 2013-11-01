@@ -38,11 +38,10 @@ I want to be able register Expense Transactions
      	| 1  | Foo  | 15.14   |
 
     	Examples:
-     	| sum 	  | account-id | counterparty-id | category-id | error-message |
-     	| "5.01"  | 10050  	   | 1           	 | 1           |(1)        	   |
-     	| "5.01"  | 1      	   | 100500      	 | 1       	   |(2)        	   |
-     	| "5.01"  | 1      	   | 1           	 | 100500  	   |(3)        	   |
-     	|"-5.10"  | 1      	   | 1           	 | 1       	   |(4)        	   |
-     	| "0.00"  | 1      	   | 1           	 | 1       	   |(4)        	   |
-     	| "30.00" | 1      	   | 1           	 | 1       	   |(5)        	   |
-
+     	| sum 	  | account-id | counterparty-id | category-id | error-message                                 |
+     	| "5.01"  | 10050  	   | 1           	 | 1           | "Account doesn’t exist"        	               |
+     	| "5.01"  | 1      	   | 100500      	 | 1       	   | "Counterparty doesn’t exist"        	       |
+     	| "5.01"  | 1      	   | 1           	 | 100500  	   | "Category doesn’t exist"        	           |
+     	|"-5.10"  | 1      	   | 1           	 | 1       	   | "Amount of money should be greater than zero" |
+     	| "0.00"  | 1      	   | 1           	 | 1       	   | "Amount of money should be greater than zero" |
+     	| "30.00" | 1      	   | 1           	 | 1       	   | "Amount of money should be greater than zero" |

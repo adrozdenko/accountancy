@@ -40,11 +40,12 @@ I want to be able register Transfer transaction
         | 2  | Foz  | 0.00    |
 
         Examples:
-        | sum     | account-from-id | account-to-id | counterparty-id | category-id | error-message |
-        | "5.01"  | 10050           | 2             | 1               | 1           |(1)            |
-        | "5.01"  | 1               | 10050         | 1               | 1           |(1)            |
-        | "5.01"  | 1               | 2             | 100500          | 1           |(2)            |
-        | "5.01"  | 1               | 2             | 1               | 100500      |(3)            |
-        |"-5.10"  | 1               | 2             | 1               | 1           |(4)            |
-        | "0.00"  | 1               | 2             | 1               | 1           |(4)            |
-        | "30.00" | 1               | 2             | 1               | 1           |(5)            |
+        | sum     | account-from-id | account-to-id | counterparty-id | category-id | error-message                                 |
+        | "5.01"  | 10050           | 2             | 1               | 1           | "Account doesn’t exist"                       |
+        | "5.01"  | 1               | 10050         | 1               | 1           | "Account doesn’t exist"                       |
+        | "5.01"  | 1               | 2             | 100500          | 1           | "Counterparty doesn’t exist"                  |
+        | "5.01"  | 1               | 2             | 1               | 100500      | "Category doesn’t exist"                      |
+        |"-5.10"  | 1               | 2             | 1               | 1           | "Amount of money should be greater than zero" |
+        | "0.00"  | 1               | 2             | 1               | 1           | "Amount of money should be greater than zero" |
+        | "30.00" | 1               | 2             | 1               | 1           | "Amount of money should be greater than zero" |
+

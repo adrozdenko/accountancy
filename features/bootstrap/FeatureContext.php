@@ -71,9 +71,9 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Then /^I should receive \((\d+)\) error$/
+     * @Then /^I should receive "([^"]*)" error$/
      */
-    public function iShouldReceiveError($errorMessage)
+    public function iShouldReceiveError2($errorMessage)
     {
         throw new PendingException();
     }
