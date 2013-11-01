@@ -16,7 +16,7 @@ I want to be able register Transfer transaction
         When I register "4.14" Transfer from Account 1 to Account 2 and Category 1 and Counterparty 1
         Then My Accounts should be:
         | id | name | balance |
-        | 1  | Foo  | 11.00    |
+        | 1  | Foo  | 11.00   |
         | 2  | Foz  | 19.28   |
 
     Scenario Outline: I register Transfer for incorrect account, category or counterparty or with incorrect amount of money
