@@ -101,4 +101,100 @@ class FeatureContext extends BehatContext
     {
         throw new PendingException();
     }
+
+    /**
+     * @Given /^I have Currencies:$/
+     */
+    public function iHaveCurrencies(TableNode $currenciesTable)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I create Account with Name "([^"]*)" and Currency (\d+)$/
+     */
+    public function iCreateAccountWithNameAndCurrency($name, $currencyId)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I delete Account (\d+)$/
+     */
+    public function iDeleteAccount($accountId)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I edit Account (\d+), set name to "([^"]*)"$/
+     */
+    public function iEditAccountSetNameTo($accountId, $name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I create Category with name "([^"]*)"$/
+     */
+    public function iCreateCategoryWithName($name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then /^my Categories should be:$/
+     */
+    public function myCategoriesShouldBe(TableNode $categoriesTable)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I delete Category (\d+)$/
+     */
+    public function iDeleteCategory($categoryId)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I edit Category (\d+), set name to "([^"]*)"$/
+     */
+    public function iEditCategorySetNameTo($categoryId, $name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I create Counterparty with Name "([^"]*)"$/
+     */
+    public function iCreateCounterpartyWithName($name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then /^my Counterparties should be:$/
+     */
+    public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I delete Counterparty (\d+)$/
+     */
+    public function iDeleteCounterparty($counterpartyId)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I edit Counterparty (\d+), set name "([^"]*)"$/
+     */
+    public function iEditCounterpartySetName($counterpartyId, $name)
+    {
+        throw new PendingException();
+    }
 }
