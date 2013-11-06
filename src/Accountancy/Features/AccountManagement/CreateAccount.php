@@ -9,6 +9,11 @@ use Accountancy\Entity\Account;
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
 
+/**
+ * Class CreateAccount
+ *
+ * @package Accountancy\Features\AccountManagement
+ */
 class CreateAccount
 {
     /**
@@ -86,6 +91,9 @@ class CreateAccount
         return $this->user;
     }
 
+    /**
+     * @throws \Accountancy\Features\FeatureException
+     */
     public function run()
     {
         $account = new Account();
@@ -104,4 +112,4 @@ class CreateAccount
             throw new FeatureException(sprintf("Account '%s' already exists", $this->accountName));
         }
     }
-} 
+}

@@ -11,6 +11,9 @@ namespace Accountancy\Entity;
  */
 class UserTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Successful scenario
+     */
     public function testAddAccount()
     {
         $account1 = new Account();
@@ -31,6 +34,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($account1, $account2), $user->getAccounts());
     }
 
+    /**
+     * Account name should be unique per user
+     */
     public function testAddAccountFailsWhenNameIsNotUnique()
     {
         $this->setExpectedException('\LogicException');
