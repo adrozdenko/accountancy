@@ -103,4 +103,57 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
         $user->deleteAccount(40);
     }
+
+    /**
+     * Should be able to find accounts by Id, name or Account
+     */
+    public function testFindAccountAcceptsIdNameOrAccount()
+    {
+        $user = new User;
+
+        $user->setAccounts(array(
+            (new Account)
+                ->setId(1)
+                ->setName("Account #1"),
+            (new Account)
+                ->setId(2)
+                ->setName("Account #2"),
+            (new Account)
+                ->setId(3)
+                ->setName("Account #3"),
+        ));
+
+        $this->assertEquals(
+            (new Account)
+                ->setId(3)
+                ->setName("Account #3"),
+            $user->findAccount(3)
+        );
+
+        $this->assertEquals(
+            (new Account)
+                ->setId(2)
+                ->setName("Account #2"),
+            $user->findAccount("Account #2")
+        );
+
+        $this->assertEquals(
+            (new Account)
+                ->setId(1)
+                ->setName("Account #1"),
+            $user->findAccount(
+                (new Account)
+                    ->setId(1)
+                    ->setName("Account #1")
+            )
+        );
+
+        $this->assertFalse($user->findAccount(150));
+        $this->assertFalse($user->findAccount("Foo"));
+        $this->assertFalse($user->findAccount(
+            (new Account)
+                ->setId(20)
+                ->setName("Bar")
+        ));
+    }
 }

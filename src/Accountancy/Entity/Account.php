@@ -47,7 +47,7 @@ class Account
      */
     public function setCurrencyId($currencyId)
     {
-        $this->currencyId = $currencyId;
+        $this->currencyId = (int) $currencyId;
 
         return $this;
     }
@@ -67,7 +67,7 @@ class Account
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (int) $id;
 
         return $this;
     }
@@ -92,7 +92,7 @@ class Account
             throw new \InvalidArgumentException('$name cant be empty');
         }
 
-        $this->name = $name;
+        $this->name = (string) $name;
 
         return $this;
     }

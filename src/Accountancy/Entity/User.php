@@ -36,6 +36,30 @@ class User
     }
 
     /**
+     * @param mixed $account
+     *
+     * @return Account|bool
+     */
+    public function findAccount($account)
+    {
+        foreach ($this->accounts as &$existingAccount) {
+            if (is_int($account) && $account === $existingAccount->getId()) {
+                return $existingAccount;
+            }
+
+            if (is_string($account) && $account === $existingAccount->getName()) {
+                return $existingAccount;
+            }
+
+            if ($account instanceof Account && $account->getName() === $existingAccount->getName()) {
+                return $existingAccount;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param Account $account
      *
      * @throws \LogicException
@@ -43,10 +67,8 @@ class User
      */
     public function addAccount(Account $account)
     {
-        foreach ($this->accounts as $existingAccount) {
-            if ($account->getName() === $existingAccount->getName()) {
-                throw new \LogicException('Name of Account should be unique');
-            }
+        if ($this->findAccount($account)) {
+            throw new \LogicException('Name of Account should be unique');
         }
 
         $this->accounts[] = $account;
@@ -65,7 +87,7 @@ class User
         $deleted = false;
 
         foreach ($this->accounts as $index => $account) {
-            if ($account->getId() === $accountId) {
+            if ($account->getId() === (int) $accountId) {
                 unset($this->accounts[$index]);
                 $deleted = true;
                 break;

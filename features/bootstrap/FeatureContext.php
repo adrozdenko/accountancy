@@ -6,6 +6,7 @@ use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Accountancy\Features\AccountManagement\DeleteAccount;
+use Accountancy\Features\AccountManagement\EditAccount;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -151,7 +152,16 @@ class FeatureContext extends BehatContext
      */
     public function iEditAccountSetNameTo($accountId, $name)
     {
-        throw new PendingException();
+        $feature = new EditAccount();
+        $feature->setUser($this->user)
+            ->setAccountId($accountId)
+            ->setNewName($name);
+
+        try {
+            $feature->run();
+        } catch(\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 
     /**
