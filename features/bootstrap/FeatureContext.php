@@ -1,6 +1,8 @@
 <?php
 
 use Accountancy\Entity\Account;
+use Accountancy\Entity\Currency;
+use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Behat\Behat\Context\ClosuredContextInterface,
@@ -31,6 +33,11 @@ class FeatureContext extends BehatContext
      * @var \Accountancy\Features\FeatureException
      */
     protected $lastException;
+
+    /**
+     * @var CurrencyCollection
+     */
+    protected $currencyCollection;
 
     /**
      * Initializes context.
@@ -164,11 +171,29 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^I have Currencies:$/
+     * @Given /^There are Currencies:$/
      */
-    public function iHaveCurrencies(TableNode $currenciesTable)
+    public function thereAreCurrencies(TableNode $currenciesTable)
     {
-        throw new PendingException();
+        $this->currencyCollection = new CurrencyCollection();
+
+        foreach ($currenciesTable->getHash() as $row) {
+            $currency = new Currency();
+
+            if (isset($row['id'])) {
+                $currency->setId($row['id']);
+            }
+
+            if (isset($row['name'])) {
+                $currency->setName($row['name']);
+            }
+
+            if (isset($row['code'])) {
+                $currency->setCode($row['code']);
+            }
+
+            $this->currencyCollection->addCurrency($currency);
+        }
     }
 
     /**
@@ -179,7 +204,8 @@ class FeatureContext extends BehatContext
         $feature = new CreateAccount();
         $feature->setUser($this->user)
             ->setAccountName($name)
-            ->setCurrencyId($currencyId);
+            ->setCurrencyId($currencyId)
+            ->setCurrencies($this->currencyCollection);
 
         try {
             $feature->run();

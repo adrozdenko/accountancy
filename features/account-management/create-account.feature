@@ -6,10 +6,10 @@ I want to be able to create Accounts
         Given I have Accounts:
         | id | name | balance | currency_id |
 
-        And I have Currencies:
-        | id| name     |
-        | 1 | "USD"    |
-        | 2 | "UAH"    |
+        And There are Currencies:
+        | id|
+        | 1 |
+        | 2 |
 
         When I create Account with Name "Foo" and Currency 1
 
@@ -22,10 +22,10 @@ I want to be able to create Accounts
         | id | name  | balance | currency_id |
         | 1  | Foo   | 0.00    | 1           |
 
-        And I have Currencies:
-        | id | name     |
-        | 1  | "USD"    |
-        | 2  | "UAH"    |
+        And There are Currencies:
+        | id |
+        | 1  |
+        | 2  |
 
         When I create Account with Name <account-name> and Currency <currency-id>
 

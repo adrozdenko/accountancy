@@ -6,6 +6,7 @@
 namespace Accountancy\Features\AccountManagement;
 
 use Accountancy\Entity\Account;
+use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
 
@@ -32,6 +33,11 @@ class CreateAccount
     protected $currencyId;
 
     /**
+     * @var CurrencyCollection
+     */
+    protected $currencies;
+
+    /**
      * @param string $accountName
      *
      * @return CreateAccount
@@ -41,14 +47,6 @@ class CreateAccount
         $this->accountName = $accountName;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAccountName()
-    {
-        return $this->accountName;
     }
 
     /**
@@ -64,19 +62,11 @@ class CreateAccount
     }
 
     /**
-     * @return int
-     */
-    public function getCurrencyId()
-    {
-        return $this->currencyId;
-    }
-
-    /**
      * @param \Accountancy\Entity\User $user
      *
      * @return CreateAccount
      */
-    public function setUser($user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
@@ -84,11 +74,15 @@ class CreateAccount
     }
 
     /**
-     * @return \Accountancy\Entity\User
+     * @param \Accountancy\Entity\CurrencyCollection $currencies
+     *
+     * @return $this
      */
-    public function getUser()
+    public function setCurrencies(CurrencyCollection $currencies)
     {
-        return $this->user;
+        $this->currencies = $currencies;
+
+        return $this;
     }
 
     /**
@@ -102,6 +96,10 @@ class CreateAccount
             $account->setName($this->accountName);
         } catch (\InvalidArgumentException $e) {
             throw new FeatureException("Name of Account can not be empty");
+        }
+
+        if (!$this->currencies->hasCurrency($this->currencyId)) {
+            throw new FeatureException("Invalid currency provided");
         }
 
         $account->setCurrencyId($this->currencyId);
