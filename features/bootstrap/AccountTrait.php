@@ -77,5 +77,9 @@ trait AccountTrait
                 assertEquals($row['currency_id'], $account->getCurrencyId(), sprintf("Currency does not match for account '%s'", $row['name']));
             }
         }
+
+        $expected = count($accountsTable->getHash());
+        $actual = count($accountsByName);
+        assertEquals($expected, $actual, sprintf("Expected %s accounts, got %s", $expected, $actual));
     }
 }

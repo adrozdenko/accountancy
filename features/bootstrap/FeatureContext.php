@@ -5,6 +5,7 @@ use Accountancy\Entity\Currency;
 use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
+use Accountancy\Features\AccountManagement\DeleteAccount;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -134,7 +135,15 @@ class FeatureContext extends BehatContext
      */
     public function iDeleteAccount($accountId)
     {
-        throw new PendingException();
+        $feature = new DeleteAccount();
+        $feature->setUser($this->user)
+            ->setAccountId($accountId);
+
+        try {
+            $feature->run();
+        } catch(\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 
     /**

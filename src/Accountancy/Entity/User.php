@@ -53,4 +53,29 @@ class User
 
         return $this;
     }
+
+    /**
+     * @param int $accountId
+     *
+     * @throws \LogicException
+     * @return $this
+     */
+    public function deleteAccount($accountId)
+    {
+        $deleted = false;
+
+        foreach ($this->accounts as $index => $account) {
+            if ($account->getId() === $accountId) {
+                unset($this->accounts[$index]);
+                $deleted = true;
+                break;
+            }
+        }
+
+        if (!$deleted) {
+            throw new \LogicException("Account doesn't exist");
+        }
+
+        return $this;
+    }
 }

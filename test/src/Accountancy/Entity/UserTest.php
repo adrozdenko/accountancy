@@ -49,4 +49,58 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $user->addAccount($account);
         $user->addAccount($account);
     }
+
+    /**
+     * Successful scenario
+     */
+    public function testDeleteAccount()
+    {
+        $user = new User;
+        $user->setAccounts(array(
+            (new Account)
+                ->setId(1)
+                ->setName("Account #1"),
+            (new Account)
+                ->setId(2)
+                ->setName("Account #2"),
+            (new Account)
+                ->setId(3)
+                ->setName("Account #3"),
+        ));
+
+        $user->deleteAccount(2);
+
+        $this->assertEquals(array(
+            (new Account)
+                ->setId(1)
+                ->setName("Account #1"),
+            (new Account)
+                ->setId(3)
+                ->setName("Account #3"),
+        ), array_values($user->getAccounts()));
+    }
+
+    /**
+     * Should fail when input is invalid
+     */
+    public function testDeleteAccountThrowsExceptionWhenAccountDoesntExist()
+    {
+        $this->setExpectedException('\LogicException');
+
+        $user = new User;
+
+        $user->setAccounts(array(
+            (new Account)
+                ->setId(1)
+                ->setName("Account #1"),
+            (new Account)
+                ->setId(2)
+                ->setName("Account #2"),
+            (new Account)
+                ->setId(3)
+                ->setName("Account #3"),
+        ));
+
+        $user->deleteAccount(40);
+    }
 }
