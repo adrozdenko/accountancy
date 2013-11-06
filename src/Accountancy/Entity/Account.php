@@ -83,10 +83,15 @@ class Account
     /**
      * @param string $name
      *
+     * @throws \InvalidArgumentException
      * @return Account
      */
     public function setName($name)
     {
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException('$name cant be empty');
+        }
+
         $this->name = $name;
 
         return $this;

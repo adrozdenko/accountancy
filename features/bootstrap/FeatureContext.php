@@ -1,5 +1,8 @@
 <?php
 
+use Accountancy\Entity\Account;
+use Accountancy\Entity\User;
+use Accountancy\Features\AccountManagement\CreateAccount;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -11,7 +14,7 @@ use Behat\Gherkin\Node\PyStringNode,
 // Require 3rd-party libraries here:
 //
 //   require_once 'PHPUnit/Autoload.php';
-//   require_once 'PHPUnit/Framework/Assert/Functions.php';
+require_once 'PHPUnit/Framework/Assert/Functions.php';
 //
 
 /**
@@ -20,6 +23,16 @@ use Behat\Gherkin\Node\PyStringNode,
 class FeatureContext extends BehatContext
 {
     /**
+     * @var Accountancy\Entity\User
+     */
+    protected $user;
+
+    /**
+     * @var \Accountancy\Features\FeatureException
+     */
+    protected $lastException;
+
+    /**
      * Initializes context.
      * Every scenario gets it's own context object.
      *
@@ -27,7 +40,7 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        // Initialize your context here
+        $this->user = new User();
     }
 
     /**
@@ -35,7 +48,27 @@ class FeatureContext extends BehatContext
      */
     public function iHaveAccounts(TableNode $accountsTable)
     {
-        throw new PendingException();
+        foreach ($accountsTable->getHash() as $row) {
+            $account = new Account();
+
+            if (isset($row['id'])) {
+                $account->setId($row['id']);
+            }
+
+            if (isset($row['name'])) {
+                $account->setName($row['name']);
+            }
+
+            if (isset($row['balance'])) {
+                $account->setBalance((float)$row['balance']);
+            }
+
+            if (isset($row['currency_id'])) {
+                $account->setCurrencyId($row['currency_id']);
+            }
+
+            $this->user->addAccount($account);
+        }
     }
 
     /**
@@ -67,15 +100,43 @@ class FeatureContext extends BehatContext
      */
     public function myAccountsShouldBe(TableNode $accountsTable)
     {
-        throw new PendingException();
+        $accountsByName = array();
+        foreach($this->user->getAccounts() as $account) {
+            $accountsByName[$account->getName()] = $account;
+        }
+
+        foreach ($accountsTable->getHash() as $row) {
+            assertArrayHasKey("name", $row, "'name' field must be present in 'My Accounts should be' table");
+            assertArrayHasKey($row['name'], $accountsByName, sprintf("Account with name '%s' doesn't exist", $row['name']));
+            $account = $accountsByName[$row['name']];
+
+
+            if (isset($row['id'])) {
+                assertEquals($row['id'], $account->getId(), sprintf("Id does not match for account '%s'", $row['name']));
+            }
+
+            if (isset($row['balance'])) {
+                assertEquals($row['balance'], $account->getBalance(), sprintf("Balance does not match for account '%s'", $row['name']));
+            }
+
+            if (isset($row['name'])) {
+                assertEquals($row['name'], $account->getName(), sprintf("Name does not match for account '%s'", $row['name']));
+            }
+
+            if (isset($row['currency_id'])) {
+                assertEquals($row['currency_id'], $account->getCurrencyId(), sprintf("Currency does not match for account '%s'", $row['name']));
+            }
+        }
     }
 
     /**
      * @Then /^I should receive "([^"]*)" error$/
      */
-    public function iShouldReceiveError2($errorMessage)
+    public function iShouldReceiveError($errorMessage)
     {
-        throw new PendingException();
+        assertInstanceOf('\Accountancy\Features\FeatureException', $this->lastException, 'I should Receive an Error');
+        assertEquals($errorMessage, $this->lastException->getMessage());
+        $this->lastException = null;
     }
 
     /**
@@ -115,7 +176,16 @@ class FeatureContext extends BehatContext
      */
     public function iCreateAccountWithNameAndCurrency($name, $currencyId)
     {
-        throw new PendingException();
+        $feature = new CreateAccount();
+        $feature->setUser($this->user)
+            ->setAccountName($name)
+            ->setCurrencyId($currencyId);
+
+        try {
+            $feature->run();
+        } catch(\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 
     /**

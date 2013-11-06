@@ -14,13 +14,13 @@ I want to be able to create Accounts
         When I create Account with Name "Foo" and Currency 1
 
         Then My Accounts should be:
-        | id | name  | balance | currency_id |
-        | 1  | "Foo" | 0.00    | 1           |
+        | name  | balance | currency_id |
+        | Foo   | 0.00    | 1           |
 
     Scenario Outline: I create Account with invalid input
         Given I have Accounts:
         | id | name  | balance | currency_id |
-        | 1  | "Foo" | 0.00    | 1           |
+        | 1  | Foo   | 0.00    | 1           |
 
         And I have Currencies:
         | id | name     |
@@ -31,8 +31,8 @@ I want to be able to create Accounts
 
         Then I should receive <error-message> error
         And My Accounts should be:
-        | id | name  | balance | currency_id |
-        | 1  | "Foo" | 0.00    | 1           |
+        | name  | balance | currency_id |
+        | Foo   | 0.00    | 1           |
 
         Examples:
         | account-name | currency-id | error-message                      |

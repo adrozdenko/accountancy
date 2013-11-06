@@ -70,4 +70,15 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $account->setBalance(4.0);
         $account->decreaseBalance(20.0);
     }
+
+    /**
+     * Name of Account cant be an empty string
+     */
+    public function testSetNameDoesntAllowEmptyValues()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        $account = new Account();
+        $account->setName('    ');
+    }
 }

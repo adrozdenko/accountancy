@@ -6,27 +6,52 @@
 
 namespace Accountancy\Entity;
 
-use Accountancy\Entity\Operation;
+use Accountancy\Entity\Account;
 
 /**
  * User Entity
  */
 class User
 {
-    public $id;
-    public $categories = array();
-    public $payees = array();
-    public $balance = 0;
+    protected $accounts = array();
 
     /**
-     * Registers operation
+     * @param array $accounts
      *
-     * @param Operation $operation
-     *
-     * @return void
+     * @return User
      */
-    public function registerOperation(Operation $operation)
+    public function setAccounts($accounts)
     {
-        $this->balance = $operation->apply($this->balance);
+        $this->accounts = $accounts;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAccounts()
+    {
+        return $this->accounts;
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @throws \LogicException
+     * @return $this
+     */
+    public function addAccount(Account $account)
+    {
+        foreach ($this->accounts as $existingAccount) {
+            if ($account->getName() === $existingAccount->getName()) {
+                throw new \LogicException('Name of Account should be unique');
+            }
+        }
+
+        $this->accounts[] = $account;
+
+        return $this;
     }
 }
+
