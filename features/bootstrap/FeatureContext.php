@@ -5,9 +5,6 @@ use Accountancy\Entity\Category;
 use Accountancy\Entity\Currency;
 use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
-use Accountancy\Features\AccountManagement\CreateAccount;
-use Accountancy\Features\AccountManagement\DeleteAccount;
-use Accountancy\Features\AccountManagement\EditAccount;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -106,57 +103,6 @@ class FeatureContext extends BehatContext
     public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $accountFromId, $accountToId, $categoryId, $counterpartyId)
     {
         throw new PendingException();
-    }
-
-    /**
-     * @When /^I create Account with Name "([^"]*)" and Currency (\d+)$/
-     */
-    public function iCreateAccountWithNameAndCurrency($name, $currencyId)
-    {
-        $feature = new CreateAccount();
-        $feature->setUser($this->user)
-            ->setAccountName($name)
-            ->setCurrencyId($currencyId)
-            ->setCurrencies($this->currencyCollection);
-
-        try {
-            $feature->run();
-        } catch(\Exception $e) {
-            $this->lastException = $e;
-        }
-    }
-
-    /**
-     * @When /^I delete Account (\d+)$/
-     */
-    public function iDeleteAccount($accountId)
-    {
-        $feature = new DeleteAccount();
-        $feature->setUser($this->user)
-            ->setAccountId($accountId);
-
-        try {
-            $feature->run();
-        } catch(\Exception $e) {
-            $this->lastException = $e;
-        }
-    }
-
-    /**
-     * @When /^I edit Account (\d+), set name to "([^"]*)"$/
-     */
-    public function iEditAccountSetNameTo($accountId, $name)
-    {
-        $feature = new EditAccount();
-        $feature->setUser($this->user)
-            ->setAccountId($accountId)
-            ->setNewName($name);
-
-        try {
-            $feature->run();
-        } catch(\Exception $e) {
-            $this->lastException = $e;
-        }
     }
 
     /**
