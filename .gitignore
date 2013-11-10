@@ -1,0 +1,5 @@
+vendor/
+bin/behat
+bin/phpcs
+bin/phpunit
+composer.lock

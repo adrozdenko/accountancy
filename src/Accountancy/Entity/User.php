@@ -15,12 +15,14 @@ class User
 {
     protected $accounts = array();
 
+    protected $categories = array();
+
     /**
      * @param array $accounts
      *
      * @return User
      */
-    public function setAccounts($accounts)
+    public function setAccounts(Array $accounts)
     {
         $this->accounts = $accounts;
 
@@ -28,7 +30,7 @@ class User
     }
 
     /**
-     * @return array
+     * @return Array
      */
     public function getAccounts()
     {
@@ -43,11 +45,10 @@ class User
     public function findAccount($account)
     {
         foreach ($this->accounts as &$existingAccount) {
-            if (is_int($account) && $account === $existingAccount->getId()) {
-                return $existingAccount;
-            }
 
-            if (is_string($account) && $account === $existingAccount->getName()) {
+            if ($account === $existingAccount->getId()) {
+                return $existingAccount;
+            } elseif ($account === $existingAccount->getName()) {
                 return $existingAccount;
             }
 
@@ -96,6 +97,103 @@ class User
 
         if (!$deleted) {
             throw new \LogicException("Account doesn't exist");
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Array $categories
+     *
+     * @return $this
+     */
+    public function setCategories(Array $categories)
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    /**
+     * @return Array
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return $this
+     */
+    public function addCategory(Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * @param integer $categoryId
+     *
+     * @return null|Category
+     */
+    public function findCategoryById($categoryId)
+    {
+        $foundedCategory = null;
+
+        foreach ($this->categories as $category) {
+
+            if ($category->getId() === $categoryId) {
+                $foundedCategory = $category;
+                break;
+            }
+        }
+
+        return $foundedCategory;
+    }
+
+    /**
+     * @param string $categoryName
+     *
+     * @return null|Category
+     */
+    public function findCategoryByName($categoryName)
+    {
+        $foundedCategory = null;
+
+        foreach ($this->categories as $category) {
+
+            if ($category->getName() === $categoryName) {
+                $foundedCategory = $category;
+                break;
+            }
+        }
+
+        return $foundedCategory;
+    }
+
+    /**
+     * @param integer $categoryId
+     *
+     * @return $this
+     */
+    public function deleteCategory($categoryId)
+    {
+        $deleted = false;
+
+        foreach ($this->categories as $key => $category) {
+
+            if ($category->getId() === $categoryId) {
+                unset($this->categories[$key]);
+                $deleted = true;
+                break;
+            }
+        }
+
+        if (!$deleted) {
+            throw new \LogicException("Category doesn't exist");
         }
 
         return $this;

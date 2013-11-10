@@ -1,6 +1,7 @@
 <?php
 
 use Accountancy\Entity\Account;
+use Accountancy\Entity\Category;
 use Accountancy\Entity\Currency;
 use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
@@ -20,6 +21,8 @@ use Behat\Gherkin\Node\PyStringNode,
 //   require_once 'PHPUnit/Autoload.php';
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 require_once 'AccountTrait.php';
+require_once 'CurrencyTrait.php';
+require_once 'CategoryTrait.php';
 //
 
 /**
@@ -27,7 +30,7 @@ require_once 'AccountTrait.php';
  */
 class FeatureContext extends BehatContext
 {
-    use AccountTrait, CurrencyTrait;
+    use AccountTrait, CurrencyTrait, CategoryTrait;
 
     /**
      * @var Accountancy\Entity\User
@@ -53,14 +56,6 @@ class FeatureContext extends BehatContext
     public function __construct(array $parameters)
     {
         $this->user = new User();
-    }
-
-    /**
-     * @Given /^I have Categories:$/
-     */
-    public function iHaveCategories(TableNode $categoriesTable)
-    {
-        throw new PendingException();
     }
 
     /**
@@ -162,38 +157,6 @@ class FeatureContext extends BehatContext
         } catch(\Exception $e) {
             $this->lastException = $e;
         }
-    }
-
-    /**
-     * @When /^I create Category with name "([^"]*)"$/
-     */
-    public function iCreateCategoryWithName($name)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @Then /^my Categories should be:$/
-     */
-    public function myCategoriesShouldBe(TableNode $categoriesTable)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I delete Category (\d+)$/
-     */
-    public function iDeleteCategory($categoryId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I edit Category (\d+), set name to "([^"]*)"$/
-     */
-    public function iEditCategorySetNameTo($categoryId, $name)
-    {
-        throw new PendingException();
     }
 
     /**

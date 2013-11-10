@@ -3,18 +3,18 @@
  *
  */
 
-namespace Accountancy\Features\AccountManagement;
+namespace Accountancy\Features\CategoryManagement;
 
 
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
 
 /**
- * Class DeleteAccount
+ * Class DeleteCategory
  *
  * @package Accountancy\Features\AccountManagement
  */
-class DeleteAccount
+class DeleteCategory
 {
     /**
      * @var User
@@ -24,16 +24,16 @@ class DeleteAccount
     /**
      * @var int
      */
-    protected $accountId;
+    protected $categoryId;
 
     /**
-     * @param int $accountId
+     * @param int $categoryId
      *
      * @return $this
      */
-    public function setAccountId($accountId)
+    public function setCategoryId($categoryId)
     {
-        $this->accountId = $accountId;
+        $this->categoryId = (int) $categoryId;
 
         return $this;
     }
@@ -55,10 +55,14 @@ class DeleteAccount
      */
     public function run()
     {
+        if (empty($this->categoryId)) {
+            throw new FeatureException("Category id can not be empty");
+        }
+
         try {
-            $this->user->deleteAccount($this->accountId);
+            $this->user->deleteCategory($this->categoryId);
         } catch (\LogicException $e) {
-            throw new FeatureException($e->getMessage());
+            throw new FeatureException("Category does not exist");
         }
     }
 }

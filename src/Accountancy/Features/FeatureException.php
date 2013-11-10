@@ -5,7 +5,6 @@
 
 namespace Accountancy\Features;
 
-
 /**
  * Class FeatureException
  *

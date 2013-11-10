@@ -5,23 +5,27 @@ I want to be able delete unused Category
     Scenario: I delete Category
         Given I have Categories:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Foo |
 
-        When I delete Category 1
-        Then my Categories should be:
+        When I delete Category "1"
+
+        Then My Categories should be:
         | id | name |
 
     Scenario Outline: I delete Category and provide invalid data
         Given I have Categories:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Foo |
 
         When I delete Category <category-id>
+
         Then I should receive <error-message> error
-        And my Categories should be:
+        And My Categories should be:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Foo |
 
         Examples:
-        | category-id | error-message            |
-        | 10050       | "Category doesn't exist" |
+        | category-id | error-message                    |
+        | ""          | "Category id can not be empty"   |
+        | "  "        | "Category id can not be empty"   |
+        | "10050"     | "Category does not exist"        |

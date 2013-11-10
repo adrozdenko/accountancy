@@ -5,23 +5,27 @@ I want to be able create categories
     Scenario: I create Category
         Given I have Categories:
         | id | name |
+
         When I create Category with name "Foo"
-        Then my Categories should be:
-        | id | name  |
-        | 1  | "Foo" |
+
+        Then My Categories should be:
+        | name |
+        | Foo  |
 
     Scenario Outline: I create invalid Category
         Given I have Categories:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Zoo |
+
         When I create Category with name <category-name>
+
         Then I should receive <error-message> error
-        And my Categories should be:
+        And My Categories should be:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Zoo |
 
         Examples:
         | category-name | error-message                    |
         | ""            | "Category name can not be empty" |
-        | "  "          | "Category name can not be empty" |
-        | "Foo"         | "Category 'Foo' already exists"  |
+        | "Zoo"         | "Category 'Zoo' already exists"  |
+
