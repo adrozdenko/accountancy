@@ -3,18 +3,6 @@ SRC_DIR="`pwd`"
 cd "`dirname "$0"`"
 cd '..'
 
-echo "Executing Unit Tests..."
-`pwd`/bin/phpunit
-OUT=$?
-if [ $OUT -eq 0 ];then
-   echo "Success!"
-else
-   echo "Please fix Unit Tests before commit"
-   exit 1
-fi
-echo ""
-echo ""
-
 echo "Executing Behat Features..."
 `pwd`/bin/behat --ansi
 OUT=$?
@@ -28,7 +16,7 @@ echo ""
 echo ""
 
 echo "Checking Code Formatting..."
-`pwd`/bin/phpcs `pwd`/src/ `pwd`/test/src/ --standard=`pwd`/vendor/instaclick/symfony2-coding-standard/Symfony2/
+`pwd`/bin/phpcs `pwd`/src/ --standard=`pwd`/vendor/instaclick/symfony2-coding-standard/Symfony2/
 OUT=$?
 if [ $OUT -eq 0 ];then
    echo "Success!"
