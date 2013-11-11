@@ -2,7 +2,8 @@
     "require-dev": {
         "behat/behat": "2.4.*@stable",
         "squizlabs/php_codesniffer": "1.4.7",
-        "instaclick/symfony2-coding-standard": "dev-remaster"
+        "instaclick/symfony2-coding-standard": "dev-remaster",
+        "phpunit/phpunit": "3.7.28"
     },
 
     "config": {
