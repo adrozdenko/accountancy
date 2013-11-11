@@ -7,6 +7,7 @@
 namespace Accountancy\Entity;
 
 use Accountancy\Entity\Account;
+use Accountancy\Entity\Counterparty;
 
 /**
  * User Entity
@@ -16,6 +17,8 @@ class User
     protected $accounts = array();
 
     protected $categories = array();
+
+    protected $counterparties = array();
 
     /**
      * @param array $accounts
@@ -141,17 +144,17 @@ class User
      */
     public function findCategoryById($categoryId)
     {
-        $foundedCategory = null;
+        $foundCategory = null;
 
         foreach ($this->categories as $category) {
 
             if ($category->getId() === $categoryId) {
-                $foundedCategory = $category;
+                $foundCategory = $category;
                 break;
             }
         }
 
-        return $foundedCategory;
+        return $foundCategory;
     }
 
     /**
@@ -161,17 +164,17 @@ class User
      */
     public function findCategoryByName($categoryName)
     {
-        $foundedCategory = null;
+        $foundCategory = null;
 
         foreach ($this->categories as $category) {
 
             if ($category->getName() === $categoryName) {
-                $foundedCategory = $category;
+                $foundCategory = $category;
                 break;
             }
         }
 
-        return $foundedCategory;
+        return $foundCategory;
     }
 
     /**
@@ -194,6 +197,103 @@ class User
 
         if (!$deleted) {
             throw new \LogicException("Category doesn't exist");
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Counterparty $counterparty
+     *
+     * @return $this
+     */
+    public function addCounterparty(Counterparty $counterparty)
+    {
+        $this->counterparties[] = $counterparty;
+
+        return $this;
+    }
+
+    /**
+     * @param Array $counterparties
+     *
+     * @return $this
+     */
+    public function setCounterparty(Array $counterparties)
+    {
+        $this->counterparties = $counterparties;
+
+        return $this;
+    }
+
+    /**
+     * @return Array
+     */
+    public function getCounterparties()
+    {
+        return $this->counterparties;
+    }
+
+    /**
+     * @param integer $counterpartyId
+     *
+     * @return null|Counterparty
+     */
+    public function findCounterpartyById($counterpartyId)
+    {
+        $foundCounterparty = null;
+
+        foreach ($this->counterparties as $counterparty) {
+
+            if ($counterparty->getId() === $counterpartyId) {
+                $foundCounterparty = $counterparty;
+                break;
+            }
+        }
+
+        return $foundCounterparty;
+    }
+
+    /**
+     * @param string $counterpartyName
+     *
+     * @return null|Counterparty
+     */
+    public function findCounterpartyByName($counterpartyName)
+    {
+        $foundCounterparty = null;
+
+        foreach ($this->counterparties as $counterparty) {
+
+            if ($counterparty->getName() === $counterpartyName) {
+                $foundCounterparty = $counterparty;
+                break;
+            }
+        }
+
+        return $foundCounterparty;
+    }
+
+    /**
+     * @param integer $counterpartyId
+     *
+     * @return $this
+     */
+    public function deleteCounterparty($counterpartyId)
+    {
+        $deleted = false;
+
+        foreach ($this->counterparties as $key => $counterparty) {
+
+            if ($counterparty->getId() === $counterpartyId) {
+                unset($this->counterparties[$key]);
+                $deleted = true;
+                break;
+            }
+        }
+
+        if (!$deleted) {
+            throw new \LogicException("Counterparty doesn't exist");
         }
 
         return $this;

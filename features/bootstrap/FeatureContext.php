@@ -20,6 +20,7 @@ require_once 'PHPUnit/Framework/Assert/Functions.php';
 require_once 'AccountTrait.php';
 require_once 'CurrencyTrait.php';
 require_once 'CategoryTrait.php';
+require_once 'CounterpartyTrait.php';
 //
 
 /**
@@ -27,7 +28,7 @@ require_once 'CategoryTrait.php';
  */
 class FeatureContext extends BehatContext
 {
-    use AccountTrait, CurrencyTrait, CategoryTrait;
+    use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait;
 
     /**
      * @var Accountancy\Entity\User
@@ -56,26 +57,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^I have Counterparties:$/
-     */
-    public function iHaveCounterparties(TableNode $counterpartiesTable)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register "([^"]*)" Expense for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @Then /^I should receive "([^"]*)" error$/
      */
     public function iShouldReceiveError($errorMessage)
     {
+        if (!$this->lastException instanceof \Accountancy\Features\FeatureException) {
+            echo (string) $this->lastException;
+        }
+        
         assertInstanceOf('\Accountancy\Features\FeatureException', $this->lastException, 'I should Receive an Error');
         assertEquals($errorMessage, $this->lastException->getMessage());
         $this->lastException = null;
@@ -85,6 +74,14 @@ class FeatureContext extends BehatContext
      * @When /^I add "([^"]*)" funds to Account (\d+)$/
      */
     public function iAddFundsToAccount($amount,  $accountId)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When /^I register "([^"]*)" Expense for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
+     */
+    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
     {
         throw new PendingException();
     }
@@ -101,38 +98,6 @@ class FeatureContext extends BehatContext
      * @When /^I register "([^"]*)" Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
      */
     public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $accountFromId, $accountToId, $categoryId, $counterpartyId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I create Counterparty with Name "([^"]*)"$/
-     */
-    public function iCreateCounterpartyWithName($name)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @Then /^my Counterparties should be:$/
-     */
-    public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I delete Counterparty (\d+)$/
-     */
-    public function iDeleteCounterparty($counterpartyId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I edit Counterparty (\d+), set name "([^"]*)"$/
-     */
-    public function iEditCounterpartySetName($counterpartyId, $name)
     {
         throw new PendingException();
     }

@@ -9,23 +9,23 @@ I want to be able to create Counterparties
         When I create Counterparty with Name "Foo"
 
         Then my Counterparties should be:
-        | id | name  |
-        | 1  | "Foo" |
+        | name |
+        | Foo  |
 
     Scenario Outline: I create Counterparty with invalid data
         Given I have Counterparties:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Foo |
 
         When I create Counterparty with Name <name>
 
         Then I should receive <error-message> error
         And my Counterparties should be:
         | id | name  |
-        | 1  | "Foo" |
+        | 1  | Foo |
 
         Examples:
         | name  | error-message                           |
-        | "Foo" | "Counterparty 'Foo' already exits"      |
+        | "Foo" | "Counterparty 'Foo' already exists"     |
         | ""    | "Name of Counterparty can not be empty" |
         | "   " | "Name of Counterparty can not be empty" |
