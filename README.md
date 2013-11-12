@@ -14,11 +14,6 @@ $ php bin/composer.phar install
 
 Before Check-In
 ---------------
-Run Behat
 ```bash
-$ bin/behat --ansi
-```
-Run phpcs
-```bash
-$ bin/phpcs src/ --standard=vendor/instaclick/symfony2-coding-standard/Symfony2/
+$ bin/before-commit
 ```
