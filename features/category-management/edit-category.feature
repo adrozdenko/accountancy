@@ -26,6 +26,4 @@ I want to be able create categories
         | "1"         | ""            | "Category name can not be empty" |
         | "1"         | "  "          | "Category name can not be empty" |
         | "2"         | "Bar"         | "Category does not exist"        |
-        | ""          | "Bar"         | "Category id can not be empty"   |
-        | "  "        | "Bar"         | "Category id can not be empty"   |
 

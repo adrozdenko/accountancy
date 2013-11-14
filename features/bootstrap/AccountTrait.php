@@ -36,7 +36,7 @@ trait AccountTrait
             }
 
             if (isset($row['balance'])) {
-                $account->setBalance((float)$row['balance']);
+                $account->setBalance($row['balance']);
             }
 
             if (isset($row['currency_id'])) {
@@ -86,7 +86,7 @@ trait AccountTrait
     }
 
     /**
-     * @When /^I create Account with Name "([^"]*)" and Currency (\d+)$/
+     * @When /^I create Account with Name "([^"]*)" and Currency "([^"]*)"$/
      */
     public function iCreateAccountWithNameAndCurrency($name, $currencyId)
     {
@@ -104,7 +104,7 @@ trait AccountTrait
     }
 
     /**
-     * @When /^I delete Account (\d+)$/
+     * @When /^I delete Account "([^"]*)"$/
      */
     public function iDeleteAccount($accountId)
     {
@@ -120,7 +120,7 @@ trait AccountTrait
     }
 
     /**
-     * @When /^I edit Account (\d+), set name to "([^"]*)"$/
+     * @When /^I edit Account "([^"]*)", set name to "([^"]*)"$/
      */
     public function iEditAccountSetNameTo($accountId, $name)
     {

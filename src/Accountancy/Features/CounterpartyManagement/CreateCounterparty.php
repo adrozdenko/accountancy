@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  *
@@ -61,16 +61,13 @@ class CreateCounterparty
             throw new FeatureException("Name of Counterparty can not be empty");
         }
 
-        if (is_null($this->user->findCounterpartyByName($this->counterpartyName))) {
-
-            $counterparty = new Counterparty;
-
-            $counterparty->setName($this->counterpartyName);
-
-            $this->user->addCounterparty($counterparty);
-
-        } else {
+        if ($this->user->findCounterpartyByName($this->counterpartyName) instanceof Counterparty) {
             throw new FeatureException(sprintf("Counterparty '%s' already exists", $this->counterpartyName));
         }
+
+        $counterparty = new Counterparty;
+        $counterparty->setName($this->counterpartyName);
+
+        $this->user->addCounterparty($counterparty);
     }
 }

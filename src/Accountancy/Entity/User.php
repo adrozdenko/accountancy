@@ -41,26 +41,37 @@ class User
     }
 
     /**
-     * @param mixed $account
+     * @param integer $accountId
      *
-     * @return Account|bool
+     * @return Account|null
      */
-    public function findAccount($account)
+    public function findAccountById($accountId)
     {
-        foreach ($this->accounts as &$existingAccount) {
+        foreach ($this->accounts as $account) {
 
-            if ($account === $existingAccount->getId()) {
-                return $existingAccount;
-            } elseif ($account === $existingAccount->getName()) {
-                return $existingAccount;
-            }
-
-            if ($account instanceof Account && $account->getName() === $existingAccount->getName()) {
-                return $existingAccount;
+            if ($account->getId() === $accountId) {
+                return $account;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    /**
+     * @param string $accountName
+     *
+     * @return Account|null
+     */
+    public function findAccountByName($accountName)
+    {
+        foreach ($this->accounts as $account) {
+
+            if ($account->getName() === $accountName) {
+                return $account;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -71,10 +82,6 @@ class User
      */
     public function addAccount(Account $account)
     {
-        if ($this->findAccount($account)) {
-            throw new \LogicException('Name of Account should be unique');
-        }
-
         $this->accounts[] = $account;
 
         return $this;
@@ -144,17 +151,14 @@ class User
      */
     public function findCategoryById($categoryId)
     {
-        $foundCategory = null;
-
         foreach ($this->categories as $category) {
 
             if ($category->getId() === $categoryId) {
-                $foundCategory = $category;
-                break;
+                return $category;
             }
         }
 
-        return $foundCategory;
+        return null;
     }
 
     /**
@@ -164,17 +168,15 @@ class User
      */
     public function findCategoryByName($categoryName)
     {
-        $foundCategory = null;
 
         foreach ($this->categories as $category) {
 
             if ($category->getName() === $categoryName) {
-                $foundCategory = $category;
-                break;
+                return $category;
             }
         }
 
-        return $foundCategory;
+        return null;
     }
 
     /**
@@ -241,17 +243,14 @@ class User
      */
     public function findCounterpartyById($counterpartyId)
     {
-        $foundCounterparty = null;
-
         foreach ($this->counterparties as $counterparty) {
 
             if ($counterparty->getId() === $counterpartyId) {
-                $foundCounterparty = $counterparty;
-                break;
+                return $counterparty;
             }
         }
 
-        return $foundCounterparty;
+        return null;
     }
 
     /**
@@ -261,17 +260,14 @@ class User
      */
     public function findCounterpartyByName($counterpartyName)
     {
-        $foundCounterparty = null;
-
         foreach ($this->counterparties as $counterparty) {
 
             if ($counterparty->getName() === $counterpartyName) {
-                $foundCounterparty = $counterparty;
-                break;
+                return $counterparty;
             }
         }
 
-        return $foundCounterparty;
+        return null;
     }
 
     /**

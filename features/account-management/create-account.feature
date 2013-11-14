@@ -11,7 +11,7 @@ I want to be able to create Accounts
         | 1 |
         | 2 |
 
-        When I create Account with Name "Foo" and Currency 1
+        When I create Account with Name "Foo" and Currency "1"
 
         Then My Accounts should be:
         | name  | balance | currency_id |
@@ -36,8 +36,8 @@ I want to be able to create Accounts
 
         Examples:
         | account-name | currency-id | error-message                      |
-        | "Bar"        | 3           | "Invalid currency provided"        |
-        | "Foo"        | 2           | "Account 'Foo' already exists"     |
-        | ""           | 2           | "Name of Account can not be empty" |
-        | "   "        | 2           | "Name of Account can not be empty" |
+        | "Bar"        | "3"         | "Invalid currency provided"        |
+        | "Foo"        | "1"         | "Account 'Foo' already exists"     |
+        | ""           | "2"         | "Name of Account can not be empty" |
+        | "   "        | "2"         | "Name of Account can not be empty" |
 

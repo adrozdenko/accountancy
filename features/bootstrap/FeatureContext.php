@@ -21,6 +21,7 @@ require_once 'AccountTrait.php';
 require_once 'CurrencyTrait.php';
 require_once 'CategoryTrait.php';
 require_once 'CounterpartyTrait.php';
+require_once 'TransactionTrait.php';
 //
 
 /**
@@ -28,7 +29,7 @@ require_once 'CounterpartyTrait.php';
  */
 class FeatureContext extends BehatContext
 {
-    use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait;
+    use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait, TransactionTrait;
 
     /**
      * @var Accountancy\Entity\User
@@ -64,41 +65,9 @@ class FeatureContext extends BehatContext
         if (!$this->lastException instanceof \Accountancy\Features\FeatureException) {
             echo (string) $this->lastException;
         }
-        
+
         assertInstanceOf('\Accountancy\Features\FeatureException', $this->lastException, 'I should Receive an Error');
         assertEquals($errorMessage, $this->lastException->getMessage());
         $this->lastException = null;
-    }
-
-    /**
-     * @When /^I add "([^"]*)" funds to Account (\d+)$/
-     */
-    public function iAddFundsToAccount($amount,  $accountId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register "([^"]*)" Expense for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register "([^"]*)" Income for Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterIncomeForAccountAndCategoryAndCounterparty($amount, $accountId, $categoryId, $counterpartyId)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I register "([^"]*)" Transfer from Account (\d+) to Account (\d+) and Category (\d+) and Counterparty (\d+)$/
-     */
-    public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $accountFromId, $accountToId, $categoryId, $counterpartyId)
-    {
-        throw new PendingException();
     }
 }

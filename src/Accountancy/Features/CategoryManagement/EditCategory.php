@@ -67,10 +67,6 @@ class EditCategory
     public function run()
     {
 
-        if (empty($this->categoryId)) {
-            throw new FeatureException("Category id can not be empty");
-        }
-
         $category = $this->user->findCategoryById($this->categoryId);
 
         if (is_null($category)) {
