@@ -4,18 +4,10 @@
  */
 
 use Accountancy\Entity\Account;
-use Accountancy\Entity\Currency;
-use Accountancy\Entity\CurrencyCollection;
-use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Accountancy\Features\AccountManagement\DeleteAccount;
 use Accountancy\Features\AccountManagement\EditAccount;
-use Behat\Behat\Context\ClosuredContextInterface,
-    Behat\Behat\Context\TranslatedContextInterface,
-    Behat\Behat\Context\BehatContext,
-    Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\TableNode;
 
 trait AccountTrait
 {

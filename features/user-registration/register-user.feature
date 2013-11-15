@@ -7,24 +7,30 @@ Feature: Register User
         | id | email | password | name |
 
         When I register using name <name> email <email> password <password>
+        And the value of email verification code that is created is <verification-code>
 
         Then registered Users should be:
-        | email    | password | name   |
-        | <email>  | "/^.*$/" | <name> |
+        | email    | password | name   | email_verification_code |
+        | <email>  | "/^.*$/" | <name> | <verification-code>     |
 
         And notification email is sent to <email> with title "Welcome to Home Accountancy"
         And notification email contains the following text:
         """
         Dear<greeting>,
-
         Welcome to Home Accountancy
+
+        Your email address  needs to be verified.
+        Please open https://example.com/verify-email/<verification-code> in your browser to verify your email address.
+
+        Best Regards,
+
         """
 
         Examples:
-        | name        | email             | password | greeting |
-        | "Foo"       | "foo@example.com" | "bar"    | " Foo"   |
-        | ""          | "foo@example.com" | "bar"    | ""       |
-        | "   "       | "foo@example.com" | "bar"    | ""       |
+        | name        | email             | password | greeting | verification-code |
+        | "Foo"       | "foo@example.com" | "bar"    | " Foo"   | "some-code"       |
+        | ""          | "foo@example.com" | "bar"    | ""       | "another-code"    |
+        | "   "       | "foo@example.com" | "bar"    | ""       | "foobarbaz"       |
 
     Scenario Outline: Visitor tries to register with invalid data
         Given there are registered Users:

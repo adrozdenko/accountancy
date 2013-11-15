@@ -1,34 +1,24 @@
 <?php
 
-use Accountancy\Entity\Account;
-use Accountancy\Entity\Category;
-use Accountancy\Entity\Currency;
 use Accountancy\Entity\CurrencyCollection;
 use Accountancy\Entity\User;
-use Behat\Behat\Context\ClosuredContextInterface,
-    Behat\Behat\Context\TranslatedContextInterface,
-    Behat\Behat\Context\BehatContext,
+use Behat\Behat\Context\BehatContext,
     Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
 
-//
-// Require 3rd-party libraries here:
-//
-//   require_once 'PHPUnit/Autoload.php';
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 require_once 'AccountTrait.php';
 require_once 'CurrencyTrait.php';
 require_once 'CategoryTrait.php';
 require_once 'CounterpartyTrait.php';
-//
+require_once 'UserTrait.php';
+require_once 'EmailTrait.php';
 
 /**
  * Features context.
  */
 class FeatureContext extends BehatContext
 {
-    use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait;
+    use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait, UserTrait, EmailTrait;
 
     /**
      * @var Accountancy\Entity\User
