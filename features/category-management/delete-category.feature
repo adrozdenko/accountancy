@@ -26,6 +26,4 @@ I want to be able delete unused Category
 
         Examples:
         | category-id | error-message                    |
-        | ""          | "Category id can not be empty"   |
-        | "  "        | "Category id can not be empty"   |
         | "10050"     | "Category does not exist"        |

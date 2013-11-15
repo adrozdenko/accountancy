@@ -9,6 +9,7 @@
 namespace Accountancy\Features\AccountManagement;
 
 use Accountancy\Entity\User;
+use Accountancy\Entity\Account;
 use Accountancy\Features\FeatureException;
 
 /**
@@ -40,7 +41,7 @@ class EditAccount
      */
     public function setAccountId($accountId)
     {
-        $this->accountId = $accountId;
+        $this->accountId = (int) $accountId;
 
         return $this;
     }
@@ -52,7 +53,7 @@ class EditAccount
      */
     public function setNewName($newName)
     {
-        $this->newName = $newName;
+        $this->newName = (string) $newName;
 
         return $this;
     }
@@ -74,19 +75,31 @@ class EditAccount
      */
     public function run()
     {
-        $account = $this->user->findAccount((int) $this->accountId);
-        if ($account === false) {
+        $account = $this->user->findAccountById($this->accountId);
+
+        if (is_null($account)) {
             throw new FeatureException("Account doesn't exist");
         }
 
-        if ($this->user->findAccount((string) $this->newName)) {
-            throw new FeatureException(sprintf("Account '%s' already exists", (string) $this->newName));
-        }
-
-        try {
-            $account->setName($this->newName);
-        } catch (\InvalidArgumentException $e) {
+        if (trim($this->newName) == '') {
             throw new FeatureException("Name of Account can not be empty");
         }
+
+        if ($this->user->findAccountByName($this->newName) instanceof Account) {
+            throw new FeatureException(sprintf("Account '%s' already exists", $this->newName));
+        }
+
+        $account->setName($this->newName);
+
+        $accounts = $this->user->getAccounts();
+
+        foreach ($accounts as $key => $value) {
+
+            if ($value->getId() === $this->accountId) {
+                $accounts[$key] = $account;
+            }
+        }
+
+        $this->user->setAccounts = $accounts;
     }
 }

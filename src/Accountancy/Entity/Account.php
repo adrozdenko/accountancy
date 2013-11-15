@@ -88,10 +88,6 @@ class Account
      */
     public function setName($name)
     {
-        if (trim($name) === '') {
-            throw new \InvalidArgumentException('$name cant be empty');
-        }
-
         $this->name = (string) $name;
 
         return $this;
@@ -113,10 +109,6 @@ class Account
      */
     public function increaseBalance($amount)
     {
-        if ($amount <= 0) {
-            throw new \InvalidArgumentException('$amount should be greater than zero');
-        }
-
         $this->balance += $amount;
 
         return $this;
@@ -131,14 +123,6 @@ class Account
      */
     public function decreaseBalance($amount)
     {
-        if ($amount <= 0) {
-            throw new \InvalidArgumentException('$amount should be greater tan zero');
-        }
-
-        if ($this->balance - $amount < 0) {
-            throw new \LogicException('$amount should not be greater than the current balance') ;
-        }
-
         $this->balance -= $amount;
 
         return $this;

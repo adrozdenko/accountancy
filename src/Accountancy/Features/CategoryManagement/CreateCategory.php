@@ -55,17 +55,17 @@ class CreateCategory
      */
     public function run()
     {
-        if (empty($this->categoryName)) {
+        if (trim($this->categoryName) == '') {
             throw new FeatureException("Category name can not be empty");
+        }
+
+        if ($this->user->findCategoryByName($this->categoryName) instanceof Category) {
+            throw new FeatureException(sprintf("Category '%s' already exists", $this->categoryName));
         }
 
         $category = new Category();
 
-        if (is_null($this->user->findCategoryByName($this->categoryName))) {
-            $category->setName($this->categoryName);
-        } else {
-            throw new FeatureException(sprintf("Category '%s' already exists", $this->categoryName));
-        }
+        $category->setName($this->categoryName);
 
         $this->user->addCategory($category);
     }

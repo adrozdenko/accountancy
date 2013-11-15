@@ -64,9 +64,9 @@ trait CategoryTrait
     }
 
     /**
-     * @When /^I create Category with name "([^"]*)"$/
+     * @When /^I create Category "([^"]*)"$/
      */
-    public function iCreateCategoryWithName($name)
+    public function iCreateCategory($name)
     {
         $feature = new CreateCategory();
         $feature->setUser($this->user)

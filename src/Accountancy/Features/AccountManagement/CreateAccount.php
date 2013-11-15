@@ -92,11 +92,15 @@ class CreateAccount
     {
         $account = new Account();
 
-        try {
-            $account->setName($this->accountName);
-        } catch (\InvalidArgumentException $e) {
+        if (trim($this->accountName) == '') {
             throw new FeatureException("Name of Account can not be empty");
         }
+
+        if ($this->user->findAccountByName($this->accountName) instanceof Account) {
+            throw new FeatureException(sprintf("Account '%s' already exists", $this->accountName));
+        }
+
+        $account->setName($this->accountName);
 
         if (!$this->currencies->hasCurrency($this->currencyId)) {
             throw new FeatureException("Invalid currency provided");
@@ -104,10 +108,6 @@ class CreateAccount
 
         $account->setCurrencyId($this->currencyId);
 
-        try {
-            $this->user->addAccount($account);
-        } catch (\LogicException $e) {
-            throw new FeatureException(sprintf("Account '%s' already exists", $this->accountName));
-        }
+        $this->user->addAccount($account);
     }
 }

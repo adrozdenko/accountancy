@@ -55,10 +55,6 @@ class DeleteCategory
      */
     public function run()
     {
-        if (empty($this->categoryId)) {
-            throw new FeatureException("Category id can not be empty");
-        }
-
         try {
             $this->user->deleteCategory($this->categoryId);
         } catch (\LogicException $e) {
