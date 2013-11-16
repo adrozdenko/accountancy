@@ -8,23 +8,29 @@ Feature: Register User
 
         When I register using name <name> email <email> password <password>
 
-        Then registered Users should be:
-        | email    | password | name   |
-        | <email>  | "/^.*$/" | <name> |
+        Then authentication payload is created <authentication-payload>
+        And registered Users should be:
+        | email    | password | name   | authentication_payload   | is_email_verified |
+        | <email>  | "/^.*$/" | <name> | <authentication-payload> | false             |
 
         And notification email is sent to <email> with title "Welcome to Home Accountancy"
         And notification email contains the following text:
         """
         Dear<greeting>,
-
         Welcome to Home Accountancy
+
+        Your email address  needs to be verified.
+        Please open https://example.com/verify-email/<authentication-payload> in your browser to verify your email address.
+
+        Best Regards,
+
         """
 
         Examples:
-        | name        | email             | password | greeting |
-        | "Foo"       | "foo@example.com" | "bar"    | " Foo"   |
-        | ""          | "foo@example.com" | "bar"    | ""       |
-        | "   "       | "foo@example.com" | "bar"    | ""       |
+        | name        | email             | password | greeting | authentication-payload |
+        | "Foo"       | "foo@example.com" | "bar"    | " Foo"   | "some-code"            |
+        | ""          | "foo@example.com" | "bar"    | ""       | "another-code"         |
+        | "   "       | "foo@example.com" | "bar"    | ""       | "foobarbaz"            |
 
     Scenario Outline: Visitor tries to register with invalid data
         Given there are registered Users:
@@ -35,7 +41,7 @@ Feature: Register User
 
         Then registered Users should be:
         | id | email             | password | name  |
-        | 1  | "foo@example.com" | "bar"   | "Foo" |
+        | 1  | "foo@example.com" | "bar"    | "Foo" |
 
         And I should receive <error-message> error
 
