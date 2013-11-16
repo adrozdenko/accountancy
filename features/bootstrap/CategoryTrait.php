@@ -37,7 +37,7 @@ trait CategoryTrait
     public function myCategoriesShouldBe(TableNode $categoriesTable)
     {
         $categoriesByName = array();
-        foreach($this->user->getCategories()->getCategories() as $category) {
+        foreach ($this->user->getCategories()->getCategories() as $category) {
             $categoriesByName[$category->getName()] = $category;
         }
 
@@ -68,27 +68,27 @@ trait CategoryTrait
     {
         $feature = new CreateCategory();
         $feature->setUser($this->user)
-                ->setCategoryName($name);
+            ->setCategoryName($name);
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
 
     /**
-    * @When /^I delete Category "([^"]*)"$/
-    */
+     * @When /^I delete Category "([^"]*)"$/
+     */
     public function iDeleteCategory($categoryId)
     {
         $feature = new DeleteCategory();
         $feature->setUser($this->user)
-                ->setCategoryId($categoryId);
+            ->setCategoryId($categoryId);
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -100,12 +100,12 @@ trait CategoryTrait
     {
         $feature = new EditCategory();
         $feature->setUser($this->user)
-                ->setCategoryId($categoryId)
-                ->setNewName($name);
+            ->setCategoryId($categoryId)
+            ->setNewName($name);
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }

@@ -33,7 +33,7 @@ trait UserTrait
         throw new PendingException();
     }
 
-  /**
+    /**
      * @When /^I sign in using email "([^"]*)" and password "([^"]*)"$/
      */
     public function iSignInUsingEmailAndPassword($arg1, $arg2)

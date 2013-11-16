@@ -59,7 +59,7 @@ class FeatureContext extends BehatContext
     public function iShouldReceiveError($errorMessage)
     {
         if (!$this->lastException instanceof \Accountancy\Features\FeatureException) {
-            echo (string) $this->lastException;
+            echo (string)$this->lastException;
         }
 
         assertInstanceOf('\Accountancy\Features\FeatureException', $this->lastException, 'I should Receive an Error');

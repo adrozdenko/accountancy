@@ -42,7 +42,7 @@ trait CounterpartyTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -53,7 +53,7 @@ trait CounterpartyTrait
     public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
     {
         $counterpartiesByName = array();
-        foreach($this->user->getCounterparties()->getCounterparties() as $counterparty) {
+        foreach ($this->user->getCounterparties()->getCounterparties() as $counterparty) {
             $counterpartiesByName[$counterparty->getName()] = $counterparty;
         }
 
@@ -84,11 +84,11 @@ trait CounterpartyTrait
     {
         $feature = new DeleteCounterparty();
         $feature->setUser($this->user)
-                ->setCounterpartyId($counterpartyId);
+            ->setCounterpartyId($counterpartyId);
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -105,7 +105,7 @@ trait CounterpartyTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }

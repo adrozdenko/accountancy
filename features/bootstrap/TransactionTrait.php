@@ -15,13 +15,13 @@ trait TransactionTrait
     {
         $feature = new FullfillTransaction();
         $feature->setUser($this->user)
-                ->setCurrencyId($currencyId)
-                ->setAccountId($accountId)
-                ->setAmount($amount);
+            ->setCurrencyId($currencyId)
+            ->setAccountId($accountId)
+            ->setAmount($amount);
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -33,14 +33,14 @@ trait TransactionTrait
     {
         $feature = new ExpenseTransaction();
         $feature->setUser($this->user)
-                ->setCurrencyId($currencyId)
-                ->setAccountId($accountId)
-                ->setCategoryId($categoryId)
-                ->setCounterpartyId($counterpartyId)
-                ->setAmount($amount);
+            ->setCurrencyId($currencyId)
+            ->setAccountId($accountId)
+            ->setCategoryId($categoryId)
+            ->setCounterpartyId($counterpartyId)
+            ->setAmount($amount);
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -52,14 +52,14 @@ trait TransactionTrait
     {
         $feature = new IncomeTransaction();
         $feature->setUser($this->user)
-                ->setCurrencyId($currencyId)
-                ->setAccountId($accountId)
-                ->setCategoryId($categoryId)
-                ->setCounterpartyId($counterpartyId)
-                ->setAmount($amount);
+            ->setCurrencyId($currencyId)
+            ->setAccountId($accountId)
+            ->setCategoryId($categoryId)
+            ->setCounterpartyId($counterpartyId)
+            ->setAmount($amount);
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -71,12 +71,12 @@ trait TransactionTrait
     {
         $feature = new TransferTransaction();
         $feature->setUser($this->user)
-                ->setFromAccountId($fromAccountId)
-                ->setToAccountId($toAccountId)
-                ->setAmount($amount);
+            ->setFromAccountId($fromAccountId)
+            ->setToAccountId($toAccountId)
+            ->setAmount($amount);
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }

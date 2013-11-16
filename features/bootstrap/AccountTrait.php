@@ -45,7 +45,7 @@ trait AccountTrait
     public function myAccountsShouldBe(TableNode $accountsTable)
     {
         $accountsByName = array();
-        foreach($this->user->getAccounts()->getAccounts() as $account) {
+        foreach ($this->user->getAccounts()->getAccounts() as $account) {
             $accountsByName[$account->getName()] = $account;
         }
 
@@ -90,7 +90,7 @@ trait AccountTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -106,7 +106,7 @@ trait AccountTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
@@ -123,7 +123,7 @@ trait AccountTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
