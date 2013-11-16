@@ -4,12 +4,10 @@
  */
 
 use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\CategoryManagement\CreateCategory;
 use Accountancy\Features\CategoryManagement\DeleteCategory;
 use Accountancy\Features\CategoryManagement\EditCategory;
-use Behat\Behat\Exception\PendingException;
 
 trait CategoryTrait
 {
@@ -29,7 +27,7 @@ trait CategoryTrait
                 $category->setName($row['name']);
             }
 
-            $this->user->addCategory($category);
+            $this->user->getCategories()->addCategory($category);
         }
     }
 
@@ -39,7 +37,7 @@ trait CategoryTrait
     public function myCategoriesShouldBe(TableNode $categoriesTable)
     {
         $categoriesByName = array();
-        foreach($this->user->getCategories() as $category) {
+        foreach($this->user->getCategories()->getCategories() as $category) {
             $categoriesByName[$category->getName()] = $category;
         }
 

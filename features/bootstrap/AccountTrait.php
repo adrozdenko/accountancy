@@ -35,7 +35,7 @@ trait AccountTrait
                 $account->setCurrencyId($row['currency_id']);
             }
 
-            $this->user->addAccount($account);
+            $this->user->getAccounts()->addAccount($account);
         }
     }
 
@@ -45,7 +45,7 @@ trait AccountTrait
     public function myAccountsShouldBe(TableNode $accountsTable)
     {
         $accountsByName = array();
-        foreach($this->user->getAccounts() as $account) {
+        foreach($this->user->getAccounts()->getAccounts() as $account) {
             $accountsByName[$account->getName()] = $account;
         }
 

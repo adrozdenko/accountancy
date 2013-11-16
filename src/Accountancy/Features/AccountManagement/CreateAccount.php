@@ -6,7 +6,7 @@
 namespace Accountancy\Features\AccountManagement;
 
 use Accountancy\Entity\Account;
-use Accountancy\Entity\CurrencyCollection;
+use Accountancy\Entity\Collection\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
 
@@ -96,7 +96,7 @@ class CreateAccount
             throw new FeatureException("Name of Account can not be empty");
         }
 
-        if ($this->user->findAccountByName($this->accountName) instanceof Account) {
+        if ($this->user->getAccounts()->findAccountByName($this->accountName) instanceof Account) {
             throw new FeatureException(sprintf("Account '%s' already exists", $this->accountName));
         }
 
@@ -108,6 +108,6 @@ class CreateAccount
 
         $account->setCurrencyId($this->currencyId);
 
-        $this->user->addAccount($account);
+        $this->user->getAccounts()->addAccount($account);
     }
 }

@@ -32,7 +32,7 @@ class TransferTransaction
     protected $toAccountId;
 
     /**
-     * @var double
+     * @var float
      */
     protected $amount = 0.0;
 
@@ -73,11 +73,11 @@ class TransferTransaction
     }
 
     /**
-     * @param double $amount
+     * @param float $amount
      */
     public function setAmount($amount)
     {
-        $this->amount = (double) $amount;
+        $this->amount = (float) $amount;
     }
 
     /**
@@ -85,13 +85,13 @@ class TransferTransaction
      */
     public function run()
     {
-        $toAccount = $this->user->findAccountById($this->toAccountId);
+        $toAccount = $this->user->getAccounts()->findAccountById($this->toAccountId);
 
         if (is_null($toAccount)) {
             throw new FeatureException("Target account doesn't exist");
         }
 
-        $fromAccount = $this->user->findAccountById($this->fromAccountId);
+        $fromAccount = $this->user->getAccounts()->findAccountById($this->fromAccountId);
 
         if (is_null($fromAccount)) {
             throw new FeatureException("Source account doesn't exist");
@@ -105,17 +105,10 @@ class TransferTransaction
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $accounts = $this->user->getAccounts();
+        $fromAccount->decreaseBalance($this->amount);
+        $this->user->getAccounts()->updateAccounts($fromAccount);
 
-        foreach ($accounts as $key => $value) {
-
-            if ($value->getId() === $fromAccount->getId()) {
-                $accounts[$key]->decreaseBalance($this->amount);
-            } elseif ($value->getId() === $toAccount->getId()) {
-                $accounts[$key]->increaseBalance($this->amount);
-            }
-        }
-
-        $this->user->setAccounts = $accounts;
+        $toAccount->increaseBalance($this->amount);
+        $this->user->getAccounts()->updateAccounts($toAccount);
     }
 }
