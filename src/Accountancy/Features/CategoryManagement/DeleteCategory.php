@@ -56,7 +56,7 @@ class DeleteCategory
     public function run()
     {
         try {
-            $this->user->deleteCategory($this->categoryId);
+            $this->user->getCategories()->deleteCategory($this->categoryId);
         } catch (\LogicException $e) {
             throw new FeatureException("Category does not exist");
         }

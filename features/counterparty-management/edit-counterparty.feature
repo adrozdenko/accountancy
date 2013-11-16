@@ -7,7 +7,7 @@ I want to be able to edit them
         | id | name |
         | 1  | Foo  |
 
-        When I edit Counterparty 1, set name "Bar"
+        When I edit Counterparty "1", set name "Bar"
         Then my Counterparties should be:
         | id | name |
         | 1  | Bar  |
@@ -23,6 +23,6 @@ I want to be able to edit them
         | 1  | Foo  |
         Examples:
         | counterparty-id | name  | error-message                           |
-        | 1               | ""    | "Name of Counterparty can not be empty" |
-        | 1               | "  "  | "Name of Counterparty can not be empty" |
-        | 100500          | "Bar" | "Counterparty doesn't exist"            |
+        | "1"             | ""    | "Name of Counterparty can not be empty" |
+        | "1"             | "  "  | "Name of Counterparty can not be empty" |
+        | "100500"        | "Bar" | "Counterparty doesn't exist"            |

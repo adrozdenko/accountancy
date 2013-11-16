@@ -83,7 +83,6 @@ class Account
     /**
      * @param string $name
      *
-     * @throws \InvalidArgumentException
      * @return Account
      */
     public function setName($name)
@@ -104,7 +103,6 @@ class Account
     /**
      * @param float $amount
      *
-     * @throws \InvalidArgumentException
      * @return Account
      */
     public function increaseBalance($amount)
@@ -117,8 +115,6 @@ class Account
     /**
      * @param float $amount
      *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @return $this
      */
     public function decreaseBalance($amount)

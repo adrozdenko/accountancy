@@ -56,7 +56,7 @@ class DeleteAccount
     public function run()
     {
         try {
-            $this->user->deleteAccount($this->accountId);
+            $this->user->getAccounts()->deleteAccount($this->accountId);
         } catch (\LogicException $e) {
             throw new FeatureException($e->getMessage());
         }

@@ -119,7 +119,7 @@ class ExpenseTransaction
      */
     public function run()
     {
-        $account = $this->user->findAccountById($this->accountId);
+        $account = $this->user->getAccounts()->findAccountById($this->accountId);
 
         if (is_null($account)) {
             throw new FeatureException("Account doesn't exist");
@@ -129,13 +129,13 @@ class ExpenseTransaction
             throw new FeatureException("Currency is't supported by account");
         }
 
-        $category = $this->user->findCategoryById($this->categoryId);
+        $category = $this->user->getCategories()->findCategoryById($this->categoryId);
 
         if (is_null($category)) {
             throw new FeatureException("Category doesn’t exist");
         }
 
-        $counterparty = $this->user->findCounterpartyById($this->counterpartyId);
+        $counterparty = $this->user->getCounterparties()->findCounterpartyById($this->counterpartyId);
 
         if (is_null($counterparty)) {
             throw new FeatureException("Counterparty doesn’t exist");
@@ -145,15 +145,8 @@ class ExpenseTransaction
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $accounts = $this->user->getAccounts();
+        $account->decreaseBalance($this->amount);
 
-        foreach ($accounts as $key => $value) {
-
-            if ($value->getId() === $account->getId()) {
-                $accounts[$key]->decreaseBalance($this->amount);
-            }
-        }
-
-        $this->user->setAccounts = $accounts;
+        $this->user->getAccounts()->updateAccounts($account);
     }
 }

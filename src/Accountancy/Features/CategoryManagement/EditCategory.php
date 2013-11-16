@@ -67,7 +67,7 @@ class EditCategory
     public function run()
     {
 
-        $category = $this->user->findCategoryById($this->categoryId);
+        $category = $this->user->getCategories()->findCategoryById($this->categoryId);
 
         if (is_null($category)) {
             throw new FeatureException("Category does not exist");
@@ -79,15 +79,6 @@ class EditCategory
 
         $category->setName($this->newName);
 
-        $categories = $this->user->getCategories();
-
-        foreach ($categories as $key => $value) {
-
-            if ($value->getId() === $this->categoryId) {
-                $categories[$key] = $category;
-            }
-        }
-
-        $this->user->setCategories($categories);
+        $this->user->getCategories()->updateCategories($category);
     }
 }

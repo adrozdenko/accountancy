@@ -3,7 +3,9 @@
 use Accountancy\Entity\Account;
 use Accountancy\Entity\Category;
 use Accountancy\Entity\Currency;
-use Accountancy\Entity\CurrencyCollection;
+use Accountancy\Entity\Collection\AccountCollection;
+use Accountancy\Entity\Collection\CategoryCollection;
+use Accountancy\Entity\Collection\CounterpartyCollection;
 use Accountancy\Entity\User;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
@@ -11,6 +13,7 @@ use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
+
 
 //
 // Require 3rd-party libraries here:
@@ -55,6 +58,9 @@ class FeatureContext extends BehatContext
     public function __construct(array $parameters)
     {
         $this->user = new User();
+        $this->user->setAccounts(new AccountCollection());
+        $this->user->setCategories(new CategoryCollection());
+        $this->user->setCounterparties(new CounterpartyCollection());
     }
 
     /**

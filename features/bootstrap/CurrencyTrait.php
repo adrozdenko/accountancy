@@ -5,7 +5,7 @@
 
 use Accountancy\Entity\Account;
 use Accountancy\Entity\Currency;
-use Accountancy\Entity\CurrencyCollection;
+use Accountancy\Entity\Collection\CurrencyCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Behat\Behat\Context\ClosuredContextInterface,

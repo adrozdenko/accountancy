@@ -29,7 +29,7 @@ trait CategoryTrait
                 $category->setName($row['name']);
             }
 
-            $this->user->addCategory($category);
+            $this->user->getCategories()->addCategory($category);
         }
     }
 
@@ -39,7 +39,7 @@ trait CategoryTrait
     public function myCategoriesShouldBe(TableNode $categoriesTable)
     {
         $categoriesByName = array();
-        foreach($this->user->getCategories() as $category) {
+        foreach($this->user->getCategories()->getCategories() as $category) {
             $categoriesByName[$category->getName()] = $category;
         }
 

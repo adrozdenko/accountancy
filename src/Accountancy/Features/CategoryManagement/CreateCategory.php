@@ -59,7 +59,7 @@ class CreateCategory
             throw new FeatureException("Category name can not be empty");
         }
 
-        if ($this->user->findCategoryByName($this->categoryName) instanceof Category) {
+        if ($this->user->getCategories()->findCategoryByName($this->categoryName) instanceof Category) {
             throw new FeatureException(sprintf("Category '%s' already exists", $this->categoryName));
         }
 
@@ -67,6 +67,6 @@ class CreateCategory
 
         $category->setName($this->categoryName);
 
-        $this->user->addCategory($category);
+        $this->user->getCategories()->addCategory($category);
     }
 }
