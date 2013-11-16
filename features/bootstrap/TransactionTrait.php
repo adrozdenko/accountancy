@@ -1,13 +1,10 @@
 <?php
 
-use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\TransactionManagement\FullfillTransaction;
 use Accountancy\Features\TransactionManagement\ExpenseTransaction;
 use Accountancy\Features\TransactionManagement\IncomeTransaction;
 use Accountancy\Features\TransactionManagement\TransferTransaction;
-use Behat\Behat\Exception\PendingException;
 
 trait TransactionTrait
 {

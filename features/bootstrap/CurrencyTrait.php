@@ -3,17 +3,8 @@
  *
  */
 
-use Accountancy\Entity\Account;
 use Accountancy\Entity\Currency;
-use Accountancy\Entity\Collection\CurrencyCollection;
-use Accountancy\Entity\User;
-use Accountancy\Features\AccountManagement\CreateAccount;
-use Behat\Behat\Context\ClosuredContextInterface,
-    Behat\Behat\Context\TranslatedContextInterface,
-    Behat\Behat\Context\BehatContext,
-    Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\TableNode;
 
 trait CurrencyTrait
 {
@@ -22,8 +13,6 @@ trait CurrencyTrait
      */
     public function thereAreCurrencies(TableNode $currenciesTable)
     {
-        $this->currencyCollection = new CurrencyCollection();
-
         foreach ($currenciesTable->getHash() as $row) {
             $currency = new Currency();
 

@@ -4,9 +4,6 @@
  */
 
 use Accountancy\Entity\Account;
-use Accountancy\Entity\Currency;
-use Accountancy\Entity\Collection\CurrencyCollection;
-use Accountancy\Entity\User;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Accountancy\Features\AccountManagement\DeleteAccount;
 use Accountancy\Features\AccountManagement\EditAccount;

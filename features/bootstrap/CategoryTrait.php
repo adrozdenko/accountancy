@@ -4,12 +4,10 @@
  */
 
 use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\CategoryManagement\CreateCategory;
 use Accountancy\Features\CategoryManagement\DeleteCategory;
 use Accountancy\Features\CategoryManagement\EditCategory;
-use Behat\Behat\Exception\PendingException;
 
 trait CategoryTrait
 {

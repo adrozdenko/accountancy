@@ -1,15 +1,11 @@
 <?php
 
-use Accountancy\Entity\Account;
-use Accountancy\Entity\Category;
-use Accountancy\Entity\Currency;
 use Accountancy\Entity\Collection\AccountCollection;
 use Accountancy\Entity\Collection\CategoryCollection;
 use Accountancy\Entity\Collection\CounterpartyCollection;
-use Accountancy\Entity\CurrencyCollection;
+use Accountancy\Entity\Collection\CurrencyCollection;
 use Accountancy\Entity\User;
-use Behat\Behat\Context\BehatContext,
-    Behat\Behat\Exception\PendingException;
+use Behat\Behat\Context\BehatContext;
 
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 require_once 'AccountTrait.php';
@@ -54,6 +50,7 @@ class FeatureContext extends BehatContext
         $this->user->setAccounts(new AccountCollection());
         $this->user->setCategories(new CategoryCollection());
         $this->user->setCounterparties(new CounterpartyCollection());
+        $this->currencyCollection = new CurrencyCollection();
     }
 
     /**
