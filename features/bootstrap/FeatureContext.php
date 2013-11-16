@@ -66,4 +66,12 @@ class FeatureContext extends BehatContext
         assertEquals($errorMessage, $this->lastException->getMessage());
         $this->lastException = null;
     }
+
+    /**
+     * @Then /^I should not receive any error$/
+     */
+    public function iShouldNotReceiveAnyError()
+    {
+        throw new PendingException();
+    }
 }
