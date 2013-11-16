@@ -32,7 +32,7 @@ class TransferTransaction
     protected $toAccountId;
 
     /**
-     * @var double
+     * @var float
      */
     protected $amount = 0.0;
 
@@ -73,11 +73,11 @@ class TransferTransaction
     }
 
     /**
-     * @param double $amount
+     * @param float $amount
      */
     public function setAmount($amount)
     {
-        $this->amount = (double) $amount;
+        $this->amount = (float) $amount;
     }
 
     /**

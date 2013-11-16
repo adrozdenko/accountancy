@@ -12,8 +12,14 @@ namespace Accountancy\Entity;
  */
 class Category
 {
+    /**
+     * @var integer
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $name;
 
     /**

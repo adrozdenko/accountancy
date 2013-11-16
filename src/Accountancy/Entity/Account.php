@@ -12,12 +12,24 @@ namespace Accountancy\Entity;
  */
 class Account
 {
+    /**
+     * @var integer
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var float
+     */
     protected $balance = 0.0;
 
+    /**
+     * @var string
+     */
     protected $currencyId;
 
     /**

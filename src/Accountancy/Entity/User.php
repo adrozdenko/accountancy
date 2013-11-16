@@ -15,10 +15,19 @@ use Accountancy\Entity\Collection\CounterpartyCollection;
  */
 class User
 {
+    /**
+     * @var AccountCollection
+     */
     protected $accounts;
 
+    /**
+     * @var CategoryCollection
+     */
     protected $categories;
 
+    /**
+     * @var CounterpartyCollection
+     */
     protected $counterparties;
 
     /**
