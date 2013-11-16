@@ -96,4 +96,12 @@ trait UserTrait
     {
         throw new PendingException();
     }
+
+    /**
+     * @When /^I update my profile, set name "([^"]*)"$/
+     */
+    public function iUpdateMyProfileSetName($arg1)
+    {
+        throw new PendingException();
+    }
 }
