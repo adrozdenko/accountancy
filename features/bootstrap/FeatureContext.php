@@ -7,15 +7,6 @@ use Accountancy\Entity\Collection\CurrencyCollection;
 use Accountancy\Entity\User;
 use Behat\Behat\Context\BehatContext;
 
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-require_once 'AccountTrait.php';
-require_once 'CurrencyTrait.php';
-require_once 'CategoryTrait.php';
-require_once 'CounterpartyTrait.php';
-require_once 'UserTrait.php';
-require_once 'EmailTrait.php';
-require_once 'TransactionTrait.php';
-
 /**
  * Features context.
  */

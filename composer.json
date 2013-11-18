@@ -11,7 +11,9 @@
     },
 
 	"autoload": {
-        "psr-0": {"Accountancy\\": "src"}
+        "psr-0": {"Accountancy\\": "src"},
+        "classmap": ["features/bootstrap"],
+        "files": ["vendor/phpunit/phpunit/PHPUnit/Framework/Assert/Functions.php"]
     }
 }
 
