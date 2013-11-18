@@ -66,12 +66,7 @@ class EditCounterparty
      */
     public function run()
     {
-
-        if (empty($this->counterpartyId)) {
-            throw new FeatureException("Counterparty id can not be empty");
-        }
-
-        $counterparty = $this->user->findCounterpartyById($this->counterpartyId);
+        $counterparty = $this->user->getCounterparties()->findCounterpartyById($this->counterpartyId);
 
         if (is_null($counterparty)) {
             throw new FeatureException("Counterparty doesn't exist");
@@ -83,15 +78,6 @@ class EditCounterparty
 
         $counterparty->setName($this->newName);
 
-        $counterparties = $this->user->getCounterparties();
-
-        foreach ($counterparties as $key => $value) {
-
-            if ($value->getId() === $this->categoryId) {
-                $counterparties[$key] = $counterparty;
-            }
-        }
-
-        $this->user->setCounterparties($counterparty);
+        $this->user->getCounterparties()->updateCounterparties($counterparty);
     }
 }

@@ -7,8 +7,6 @@
 use Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
 
-
-
 trait EmailTrait
 {
     /**

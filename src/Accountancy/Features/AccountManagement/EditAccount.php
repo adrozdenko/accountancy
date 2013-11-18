@@ -75,7 +75,7 @@ class EditAccount
      */
     public function run()
     {
-        $account = $this->user->findAccountById($this->accountId);
+        $account = $this->user->getAccounts()->findAccountById($this->accountId);
 
         if (is_null($account)) {
             throw new FeatureException("Account doesn't exist");
@@ -85,21 +85,12 @@ class EditAccount
             throw new FeatureException("Name of Account can not be empty");
         }
 
-        if ($this->user->findAccountByName($this->newName) instanceof Account) {
+        if ($this->user->getAccounts()->findAccountByName($this->newName) instanceof Account) {
             throw new FeatureException(sprintf("Account '%s' already exists", $this->newName));
         }
 
         $account->setName($this->newName);
 
-        $accounts = $this->user->getAccounts();
-
-        foreach ($accounts as $key => $value) {
-
-            if ($value->getId() === $this->accountId) {
-                $accounts[$key] = $account;
-            }
-        }
-
-        $this->user->setAccounts = $accounts;
+        $this->user->getAccounts()->updateAccounts($account);
     }
 }

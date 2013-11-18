@@ -55,12 +55,8 @@ class DeleteCounterparty
      */
     public function run()
     {
-        if (empty($this->counterpartyId)) {
-            throw new FeatureException("Counterparty id can not be empty");
-        }
-
         try {
-            $this->user->deleteCounterparty($this->counterpartyId);
+            $this->user->getCounterparties()->deleteCounterparty($this->counterpartyId);
         } catch (\LogicException $e) {
             throw new FeatureException("Counterparty doesn't exit");
         }

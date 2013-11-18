@@ -7,15 +7,7 @@ use Accountancy\Features\CounterpartyManagement\EditCounterparty;
 use Accountancy\Features\CounterpartyManagement\DeleteCounterparty;
 use Accountancy\Features\CounterpartyManagement\CreateCounterparty;
 use Accountancy\Entity\Counterparty;
-use Accountancy\Entity\Currency;
-use Accountancy\Entity\CurrencyCollection;
-use Accountancy\Entity\User;
-use Behat\Behat\Context\ClosuredContextInterface,
-    Behat\Behat\Context\TranslatedContextInterface,
-    Behat\Behat\Context\BehatContext,
-    Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\TableNode;
 
 trait CounterpartyTrait
 {
@@ -35,7 +27,7 @@ trait CounterpartyTrait
                 $counterparty->setName($row['name']);
             }
 
-            $this->user->addCounterparty($counterparty);       
+            $this->user->getCounterparties()->addCounterparty($counterparty);
         }
     }
 
@@ -50,9 +42,9 @@ trait CounterpartyTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
-        }       
+        }
     }
 
     /**
@@ -61,7 +53,7 @@ trait CounterpartyTrait
     public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
     {
         $counterpartiesByName = array();
-        foreach($this->user->getCounterparties() as $counterparty) {
+        foreach ($this->user->getCounterparties()->getCounterparties() as $counterparty) {
             $counterpartiesByName[$counterparty->getName()] = $counterparty;
         }
 
@@ -82,27 +74,27 @@ trait CounterpartyTrait
 
         $expected = count($counterpartiesTable->getHash());
         $actual = count($counterpartiesByName);
-        assertEquals($expected, $actual, sprintf("Expected %s counterparties, got %s", $expected, $actual));   
+        assertEquals($expected, $actual, sprintf("Expected %s counterparties, got %s", $expected, $actual));
     }
 
     /**
-     * @When /^I delete Counterparty (\d+)$/
+     * @When /^I delete Counterparty "([^"]*)"$/
      */
     public function iDeleteCounterparty($counterpartyId)
     {
         $feature = new DeleteCounterparty();
         $feature->setUser($this->user)
-                ->setCounterpartyId($counterpartyId);
-                
+            ->setCounterpartyId($counterpartyId);
+
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
-        }    
+        }
     }
 
     /**
-     * @When /^I edit Counterparty (\d+), set name "([^"]*)"$/
+     * @When /^I edit Counterparty "([^"]*)", set name "([^"]*)"$/
      */
     public function iEditCounterpartySetName($counterpartyId, $name)
     {
@@ -113,7 +105,7 @@ trait CounterpartyTrait
 
         try {
             $feature->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }

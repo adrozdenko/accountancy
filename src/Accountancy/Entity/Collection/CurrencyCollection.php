@@ -6,17 +6,19 @@
  * Time: 4:55 PM
  */
 
-namespace Accountancy\Entity;
+namespace Accountancy\Entity\Collection;
+
+use Accountancy\Entity\Currency;
 
 /**
  * Class CurrencyCollection
  *
- * @package Accountancy\Entity
+ * @package Accountancy\Entity\Collection
  */
 class CurrencyCollection
 {
     /**
-     * @var array
+     * @var Array
      */
     protected $currencies = array();
 

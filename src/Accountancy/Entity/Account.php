@@ -12,12 +12,24 @@ namespace Accountancy\Entity;
  */
 class Account
 {
+    /**
+     * @var integer
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var float
+     */
     protected $balance = 0.0;
 
+    /**
+     * @var string
+     */
     protected $currencyId;
 
     /**
@@ -83,7 +95,6 @@ class Account
     /**
      * @param string $name
      *
-     * @throws \InvalidArgumentException
      * @return Account
      */
     public function setName($name)
@@ -104,7 +115,6 @@ class Account
     /**
      * @param float $amount
      *
-     * @throws \InvalidArgumentException
      * @return Account
      */
     public function increaseBalance($amount)
@@ -117,8 +127,6 @@ class Account
     /**
      * @param float $amount
      *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @return $this
      */
     public function decreaseBalance($amount)

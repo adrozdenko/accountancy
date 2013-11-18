@@ -33,7 +33,7 @@ class FullfillTransaction
 
 
     /**
-     * @var double
+     * @var float
      */
     protected $amount = 0.0;
 
@@ -62,11 +62,11 @@ class FullfillTransaction
     }
 
     /**
-     * @param double $amount
+     * @param float $amount
      */
     public function setAmount($amount)
     {
-        $this->amount = (double) $amount;
+        $this->amount = (float) $amount;
     }
 
     /**
@@ -86,7 +86,7 @@ class FullfillTransaction
      */
     public function run()
     {
-        $account = $this->user->findAccountById($this->accountId);
+        $account = $this->user->getAccounts()->findAccountById($this->accountId);
 
         if (is_null($account)) {
             throw new FeatureException("Account doesn't exist");
@@ -100,15 +100,8 @@ class FullfillTransaction
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $accounts = $this->user->getAccounts();
+        $account->setBalance($this->amount);
 
-        foreach ($accounts as $key => $value) {
-
-            if ($value->getId() === $account->getId()) {
-                $accounts[$key]->setBalance($this->amount);
-            }
-        }
-
-        $this->user->setAccounts = $accounts;
+        $this->user->getAccounts()->updateAccounts($account);
     }
 }
