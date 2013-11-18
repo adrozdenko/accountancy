@@ -1,4 +1,9 @@
 <?php
+/**
+ *
+ */
+
+namespace Accountancy;
 
 use Accountancy\Entity\Collection\AccountCollection;
 use Accountancy\Entity\Collection\CategoryCollection;
@@ -45,12 +50,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @param string $errorMessage
+     *
      * @Then /^I should receive "([^"]*)" error$/
      */
     public function iShouldReceiveError($errorMessage)
     {
         if (!$this->lastException instanceof \Accountancy\Features\FeatureException) {
-            echo (string)$this->lastException;
+            echo (string) $this->lastException;
         }
 
         assertInstanceOf('\Accountancy\Features\FeatureException', $this->lastException, 'I should Receive an Error');

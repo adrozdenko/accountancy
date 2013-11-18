@@ -3,6 +3,8 @@
  *
  */
 
+namespace Accountancy;
+
 use Accountancy\Entity\Category;
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\CategoryManagement\CreateCategory;
@@ -12,6 +14,8 @@ use Accountancy\Features\CategoryManagement\EditCategory;
 trait CategoryTrait
 {
     /**
+     * @param TableNode $categoriesTable
+     *
      * @Given /^I have Categories:$/
      */
     public function iHaveCategories(TableNode $categoriesTable)
@@ -32,6 +36,8 @@ trait CategoryTrait
     }
 
     /**
+     * @param TableNode $categoriesTable
+     *
      * @Then /^My Categories should be:$/
      */
     public function myCategoriesShouldBe(TableNode $categoriesTable)
@@ -62,6 +68,8 @@ trait CategoryTrait
     }
 
     /**
+     * @param string $name
+     *
      * @When /^I create Category "([^"]*)"$/
      */
     public function iCreateCategory($name)
@@ -78,6 +86,8 @@ trait CategoryTrait
     }
 
     /**
+     * @param int $categoryId
+     *
      * @When /^I delete Category "([^"]*)"$/
      */
     public function iDeleteCategory($categoryId)
@@ -94,6 +104,9 @@ trait CategoryTrait
     }
 
     /**
+     * @param int    $categoryId
+     * @param string $name
+     *
      * @When /^I edit Category "([^"]*)", set name to "([^"]*)"$/
      */
     public function iEditCategorySetNameTo($categoryId, $name)

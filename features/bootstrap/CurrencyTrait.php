@@ -3,12 +3,16 @@
  *
  */
 
+namespace Accountancy;
+
 use Accountancy\Entity\Currency;
 use Behat\Gherkin\Node\TableNode;
 
 trait CurrencyTrait
 {
     /**
+     * @param TableNode $currenciesTable
+     *
      * @Given /^There are Currencies:$/
      */
     public function thereAreCurrencies(TableNode $currenciesTable)

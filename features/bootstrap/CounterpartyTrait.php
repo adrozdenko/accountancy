@@ -3,6 +3,8 @@
  *
  */
 
+namespace Accountancy;
+
 use Accountancy\Features\CounterpartyManagement\EditCounterparty;
 use Accountancy\Features\CounterpartyManagement\DeleteCounterparty;
 use Accountancy\Features\CounterpartyManagement\CreateCounterparty;
@@ -12,6 +14,8 @@ use Behat\Gherkin\Node\TableNode;
 trait CounterpartyTrait
 {
     /**
+     * @param TableNode $counterpartiesTable
+     *
      * @Given /^I have Counterparties:$/
      */
     public function iHaveCounterparties(TableNode $counterpartiesTable)
@@ -32,6 +36,8 @@ trait CounterpartyTrait
     }
 
     /**
+     * @param string $name
+     *
      * @When /^I create Counterparty with Name "([^"]*)"$/
      */
     public function iCreateCounterpartyWithName($name)
@@ -48,6 +54,8 @@ trait CounterpartyTrait
     }
 
     /**
+     * @param TableNode $counterpartiesTable
+     *
      * @Then /^my Counterparties should be:$/
      */
     public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
@@ -78,6 +86,8 @@ trait CounterpartyTrait
     }
 
     /**
+     * @param int $counterpartyId
+     *
      * @When /^I delete Counterparty "([^"]*)"$/
      */
     public function iDeleteCounterparty($counterpartyId)
@@ -94,6 +104,9 @@ trait CounterpartyTrait
     }
 
     /**
+     * @param int    $counterpartyId
+     * @param string $name
+     *
      * @When /^I edit Counterparty "([^"]*)", set name "([^"]*)"$/
      */
     public function iEditCounterpartySetName($counterpartyId, $name)

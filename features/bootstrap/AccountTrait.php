@@ -3,6 +3,8 @@
  *
  */
 
+namespace Accountancy;
+
 use Accountancy\Entity\Account;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Accountancy\Features\AccountManagement\DeleteAccount;
@@ -12,6 +14,8 @@ use Behat\Gherkin\Node\TableNode;
 trait AccountTrait
 {
     /**
+     * @param TableNode $accountsTable
+     *
      * @Given /^I have Accounts:$/
      */
     public function iHaveAccounts(TableNode $accountsTable)
@@ -40,6 +44,8 @@ trait AccountTrait
     }
 
     /**
+     * @param TableNode $accountsTable
+     *
      * @Then /^My Accounts should be:$/
      */
     public function myAccountsShouldBe(TableNode $accountsTable)
@@ -78,6 +84,9 @@ trait AccountTrait
     }
 
     /**
+     * @param string $name
+     * @param int    $currencyId
+     *
      * @When /^I create Account with Name "([^"]*)" and Currency "([^"]*)"$/
      */
     public function iCreateAccountWithNameAndCurrency($name, $currencyId)
@@ -96,6 +105,8 @@ trait AccountTrait
     }
 
     /**
+     * @param int $accountId
+     *
      * @When /^I delete Account "([^"]*)"$/
      */
     public function iDeleteAccount($accountId)
@@ -112,6 +123,9 @@ trait AccountTrait
     }
 
     /**
+     * @param int    $accountId
+     * @param string $name
+     *
      * @When /^I edit Account "([^"]*)", set name to "([^"]*)"$/
      */
     public function iEditAccountSetNameTo($accountId, $name)

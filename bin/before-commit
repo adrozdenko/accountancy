@@ -16,7 +16,7 @@ echo ""
 echo ""
 
 echo "Checking Code Formatting..."
-`pwd`/bin/phpcs `pwd`/src/ --standard=`pwd`/vendor/instaclick/symfony2-coding-standard/Symfony2/
+`pwd`/bin/phpcs `pwd`/src/ `pwd`/features/bootstrap/ --standard=`pwd`/vendor/instaclick/symfony2-coding-standard/Symfony2/
 OUT=$?
 if [ $OUT -eq 0 ];then
    echo "Success!"

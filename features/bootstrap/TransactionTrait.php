@@ -1,4 +1,9 @@
 <?php
+/**
+ *
+ */
+
+namespace Accountancy;
 
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\TransactionManagement\FullfillTransaction;
@@ -9,6 +14,10 @@ use Accountancy\Features\TransactionManagement\TransferTransaction;
 trait TransactionTrait
 {
     /**
+     * @param float $amount
+     * @param int   $currencyId
+     * @param float $accountId
+     *
      * @When /^I add "([^"]*)" funds of currency "([^"]*)" to Account "([^"]*)"$/
      */
     public function iAddFundsToAccount($amount, $currencyId, $accountId)
@@ -27,6 +36,12 @@ trait TransactionTrait
     }
 
     /**
+     * @param float $amount
+     * @param int   $currencyId
+     * @param int   $accountId
+     * @param int   $categoryId
+     * @param int   $counterpartyId
+     *
      * @When /^I register "([^"]*)" Expense of currency "([^"]*)" for Account "([^"]*)" and Category "([^"]*)" and Counterparty "([^"]*)"$/
      */
     public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $currencyId, $accountId, $categoryId, $counterpartyId)
@@ -46,6 +61,12 @@ trait TransactionTrait
     }
 
     /**
+     * @param float $amount
+     * @param int   $currencyId
+     * @param int   $accountId
+     * @param int   $categoryId
+     * @param int   $counterpartyId
+     *
      * @When /^I register "([^"]*)" Income of currency "([^"]*)" for Account "([^"]*)" and Category "([^"]*)" and Counterparty "([^"]*)"$/
      */
     public function iRegisterIncomeForAccountAndCategoryAndCounterparty($amount, $currencyId, $accountId, $categoryId, $counterpartyId)
@@ -65,6 +86,10 @@ trait TransactionTrait
     }
 
     /**
+     * @param float $amount
+     * @param int   $fromAccountId
+     * @param int   $toAccountId
+     *
      * @When /^I register "([^"]*)" Transfer from Account "([^"]*)" to Account "([^"]*)"$/
      */
     public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $fromAccountId, $toAccountId)
