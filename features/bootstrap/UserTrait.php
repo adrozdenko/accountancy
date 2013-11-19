@@ -143,7 +143,18 @@ trait UserTrait
      */
     public function iSignInUsingAuthenticationPayload($authenticationPayload)
     {
-        throw new PendingException();
+        $feature = new Authentication();
+
+        $feature->setUserCollection($this->registeredUsers)
+            ->setAuthenticationPayload($authenticationPayload);
+
+        try {
+            $feature->run();
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
+
+        $this->signedInUser = $feature->getUser();
     }
 
     /**

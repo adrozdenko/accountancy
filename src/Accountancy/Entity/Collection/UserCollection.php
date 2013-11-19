@@ -60,7 +60,21 @@ class UserCollection
     public function findUserByEmailAndPassword($email, $password)
     {
         foreach ($this->users as $user) {
-            if ($user->getEmail() == $email && $user->getPassword() == $password) {
+            if ($user->getEmail() === $email && $user->getPassword() === $password) {
+                return $user;
+            }
+        }
+    }
+
+    /**
+     * @param string $authenticationPayload
+     *
+     * @return User|null
+     */
+    public function findUserByAuthenticationPayload($authenticationPayload)
+    {
+        foreach ($this->users as $user) {
+            if ($user->getAuthenticationPayload() === $authenticationPayload) {
                 return $user;
             }
         }

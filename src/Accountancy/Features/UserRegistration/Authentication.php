@@ -38,6 +38,11 @@ class Authentication
     protected $user;
 
     /**
+     * @var string
+     */
+    protected $authenticationPayload;
+
+    /**
      * @return \Accountancy\Entity\User
      */
     public function getUser()
@@ -82,22 +87,49 @@ class Authentication
     }
 
     /**
+     * @param string $authenticationPayload
+     */
+    public function setAuthenticationPayload($authenticationPayload)
+    {
+        $this->authenticationPayload = $authenticationPayload;
+    }
+
+    /**
      * Performs authentication by email/password or authentication payload
      */
     public function run()
     {
-        $this->user = $this->userCollection->findUserByEmailAndPassword($this->email, $this->password);
+        if ($this->email !== null && $this->password !== null) {
+            $this->user = $this->userCollection->findUserByEmailAndPassword($this->email, $this->password);
 
-        if (!$this->user instanceof User) {
-            throw new FeatureException("Invalid email or password");
+            if (!$this->user instanceof User) {
+                throw new FeatureException("Invalid email or password");
+            }
+
+            if (!$this->user->isEmailVerified()) {
+                $this->user = null;
+                throw new FeatureException("Your email address has not yet been verified. Please check your email and follow the URL provided in it.");
+            }
+
+            $this->user->setAuthenticated(true);
+
+            return;
         }
 
-        if (!$this->user->isEmailVerified()) {
-            $this->user = null;
-            throw new FeatureException("Your email address has not yet been verified. Please check your email and follow the URL provided in it.");
+        if ($this->authenticationPayload !== null) {
+            $this->user = $this->userCollection->findUserByAuthenticationPayload($this->authenticationPayload);
+
+            if (!$this->user instanceof User) {
+                throw new FeatureException("Verification code is not valid");
+            }
+
+            $this->user->setAuthenticationPayload("");
+            $this->user->setEmailVerified(true);
+            $this->user->setAuthenticated(true);
+
+            return;
         }
 
-        $this->user->setAuthenticated(true);
-
+        throw new \LogicException("Either authentication payload or email and password should be set");
     }
 }

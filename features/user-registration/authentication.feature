@@ -23,7 +23,7 @@ Feature: User Authentication
 
         Then I become a User with the following properties:
             | id | email              | password | is_authenticated | authentication_payload | is_email_verified |
-            | 1  | foo@example.com    | "/^.*$/" | true             | ""                     | true              |
+            | 1  | foo@example.com    | bar      | true             | ""                     | true              |
 
     Scenario Outline: Visitor tries become authenticated using invalid email and password
         Given there are registered Users:
