@@ -43,6 +43,11 @@ class User
     /**
      * @var string
      */
+    protected $name;
+
+    /**
+     * @var string
+     */
     protected $password;
 
     /**
@@ -106,6 +111,22 @@ class User
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

@@ -10,6 +10,7 @@ use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\UserRegistration\Authentication;
 use Accountancy\Features\UserRegistration\ChangePassword;
+use Accountancy\Features\UserRegistration\UpdateProfile;
 use Behat\Behat\Exception\BehaviorException;
 use Behat\Behat\Exception\ErrorException;
 use Behat\Behat\Exception\PendingException;
@@ -42,6 +43,9 @@ trait UserTrait
             }
             if (isset($row['email'])) {
                 $newUser->setEmail($row['email']);
+            }
+            if (isset($row['name'])) {
+                $newUser->setName($row['name']);
             }
             if (isset($row['password'])) {
                 $newUser->setPassword($row['password']);
@@ -95,6 +99,10 @@ trait UserTrait
 
             if (isset($row['password'])) {
                 assertEquals($row['password'], $user->getPassword(), sprintf("Password does not match for user '%s'", $row['email']));
+            }
+
+            if (isset($row['name'])) {
+                assertEquals($row['name'], $user->getName(), sprintf("Name does not match for user '%s'", $row['name']));
             }
 
             if (isset($row['is_authenticated'])) {
@@ -161,6 +169,10 @@ trait UserTrait
 
         if (isset($row['email'])) {
             assertEquals($row['email'], $this->signedInUser->getEmail(), 'Email doesn\'t match for signed in user');
+        }
+
+        if (isset($row['name'])) {
+            assertEquals($row['name'], $this->signedInUser->getName(), 'Name doesn\'t match for signed in user');
         }
 
         if (isset($row['is_authenticated'])) {
@@ -288,6 +300,14 @@ trait UserTrait
      */
     public function iUpdateMyProfileSetName($newName)
     {
-        throw new PendingException();
+        $feature = new UpdateProfile();
+        $feature->setUser($this->signedInUser)
+            ->setNewName($newName);
+
+        try {
+            $feature->run();
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 }
