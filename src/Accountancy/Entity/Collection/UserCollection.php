@@ -67,6 +67,20 @@ class UserCollection
     }
 
     /**
+     * @param string $email
+     *
+     * @return User|null
+     */
+    public function findUserByEmail($email)
+    {
+        foreach ($this->users as $user) {
+            if ($user->getEmail() === $email) {
+                return $user;
+            }
+        }
+    }
+
+    /**
      * @param string $authenticationPayload
      *
      * @return User|null

@@ -9,6 +9,9 @@ namespace Accountancy;
 use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\UserRegistration\Authentication;
+use Accountancy\Features\UserRegistration\ChangePassword;
+use Behat\Behat\Exception\BehaviorException;
+use Behat\Behat\Exception\ErrorException;
 use Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 
@@ -75,7 +78,41 @@ trait UserTrait
      */
     public function registeredUsersShouldBe(TableNode $usersTable)
     {
-        throw new PendingException();
+        $usersByEmail = array();
+        foreach ($this->registeredUsers->getUsers() as $user) {
+            $usersByEmail[$user->getEmail()] = $user;
+        }
+
+        foreach ($usersTable->getHash() as $row) {
+            assertArrayHasKey("email", $row, "'email' field must be present in 'registered Users should be' table");
+            assertArrayHasKey($row['email'], $usersByEmail, sprintf("User with email '%s' doesn't exist", $row['email']));
+            $user = $usersByEmail[$row['email']];
+
+
+            if (isset($row['id'])) {
+                assertEquals($row['id'], $user->getId(), sprintf("Id does not match for user '%s'", $row['email']));
+            }
+
+            if (isset($row['password'])) {
+                assertEquals($row['password'], $user->getPassword(), sprintf("Password does not match for user '%s'", $row['email']));
+            }
+
+            if (isset($row['is_authenticated'])) {
+                assertEquals($row['is_authenticated'] === 'true', $user->isAuthenticated(), sprintf("is_authenticated flag does not match for user '%s'", $row['email']));
+            }
+
+            if (isset($row['is_email_verified'])) {
+                assertEquals($row['is_email_verified'] === 'true', $user->isEmailVerified(), sprintf("is_email_verified flag does not match for user '%s'", $row['email']));
+            }
+
+            if (isset($row['authentication_payload'])) {
+                assertEquals($row['authentication_payload'], $user->getAuthenticationPayload(), sprintf("Authentication payload does not match for user '%s'", $row['email']));
+            }
+        }
+
+        $expected = count($usersTable->getHash());
+        $actual = count($usersByEmail);
+        assertEquals($expected, $actual, sprintf("Expected %s registered users, got %s", $expected, $actual));
     }
 
     /**
@@ -134,6 +171,9 @@ trait UserTrait
             assertEquals($row['is_email_verified'] === 'true', $this->signedInUser->isEmailVerified(), 'Email verification flag doesn\'t match');
         }
 
+        if (isset($row['authentication_payload'])) {
+            assertEquals($row['authentication_payload'], $this->signedInUser->getAuthenticationPayload(), 'Authentication payload doesn\'t match for signed in user');
+        }
     }
 
     /**
@@ -172,7 +212,35 @@ trait UserTrait
      */
     public function iAmAUserWithTheFollowingProperties(TableNode $userTable)
     {
-        throw new PendingException();
+        $hash = $userTable->getHash();
+
+        $row = $hash[0];
+
+        $this->signedInUser = $this->registeredUsers->findUserByEmail($row['email']);
+
+        if (!$this->signedInUser instanceof User) {
+            throw new BehaviorException(sprintf("User '%s' should be registered using 'there are registered users table'", $row['email']));
+        }
+
+        if (isset($row['id'])) {
+            $this->signedInUser->setId($row['id']);
+        }
+
+        if (isset($row['password'])) {
+            $this->signedInUser->setPassword($row['password']);
+        }
+
+        if (isset($row['email'])) {
+            $this->signedInUser->setEmail($row['email']);
+        }
+
+        if (isset($row['is_authenticated'])) {
+            $this->signedInUser->setAuthenticated($row['is_authenticated'] === 'true');
+        }
+
+        if (isset($row['is_email_verified'])) {
+            $this->signedInUser->setEmailVerified($row['is_email_verified'] === 'true');
+        }
     }
 
     /**
@@ -182,7 +250,15 @@ trait UserTrait
      */
     public function iChangeMyPasswordTo($newPassword)
     {
-        throw new PendingException();
+        $feature = new ChangePassword();
+        $feature->setUser($this->signedInUser)
+            ->setNewPassword($newPassword);
+
+        try {
+            $feature->run();
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 
     /**

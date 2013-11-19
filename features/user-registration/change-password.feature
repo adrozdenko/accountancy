@@ -6,42 +6,42 @@ Feature: Change Password
     Scenario: User changes password
         Given there are registered Users:
             | id | email              | password |
-            | 1  | "foo@expample.com" | "foo"    |
+            | 1  | foo@example.com    | foo      |
 
         And I am a User with the following properties:
             | id | email              | password | is_authenticated |
-            | 1  | "foo@expample.com" | "foo"    | true             |
+            | 1  | foo@example.com    | foo      | true             |
 
         When I change my password to "barbar"
 
         Then I become a User with the following properties:
             | id | email              | password | is_authenticated |
-            | 1  | "foo@expample.com" | "barbar" | true             |
+            | 1  | foo@example.com    | barbar   | true             |
 
         And registered Users should be:
             | id | email              | password |
-            | 1  | "foo@expample.com" | "barbar" |
+            | 1  | foo@example.com    | barbar   |
 
 
     Scenario Outline:
         Given there are registered Users:
             | id | email              | password |
-            | 1  | "foo@expample.com" | "foo"    |
+            | 1  | foo@example.com    | foo      |
 
         And I am a User with the following properties:
             | id | email              | password | is_authenticated |
-            | 1  | "foo@expample.com" | "foo"    | true             |
+            | 1  | foo@example.com    | foo      | true             |
 
         When I change my password to <new-password>
 
         Then I should receive <error-message> error
         And I become a User with the following properties:
             | id | email              | password | is_authenticated |
-            | 1  | "foo@expample.com" | "foo"    | true             |
+            | 1  | foo@example.com    | foo      | true             |
 
         And registered Users should be:
             | id | email              | password |
-            | 1  | "foo@expample.com" | "foo"    |
+            | 1  | foo@example.com    | foo      |
 
     Examples:
         | new-password | error-message                                   |
