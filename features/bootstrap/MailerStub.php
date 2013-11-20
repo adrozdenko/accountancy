@@ -31,6 +31,11 @@ class MailerStub implements MailerInterface
     protected $body;
 
     /**
+     * @var bool
+     */
+    protected $mailSent = false;
+
+    /**
      * @return string
      */
     public function getBody()
@@ -55,6 +60,16 @@ class MailerStub implements MailerInterface
     }
 
     /**
+     * @return boolean
+     */
+    public function isMailSent()
+    {
+        return $this->mailSent;
+    }
+
+
+
+    /**
      * @param string $to
      * @param string $title
      * @param string $body
@@ -64,5 +79,6 @@ class MailerStub implements MailerInterface
         $this->to = $to;
         $this->title = $title;
         $this->body = $body;
+        $this->mailSent = true;
     }
 }

@@ -72,6 +72,6 @@ class FeatureContext extends BehatContext
      */
     public function iShouldNotReceiveAnyError()
     {
-        throw new PendingException();
+        assertNotInstanceOf('\Exception', $this->lastException);
     }
 }

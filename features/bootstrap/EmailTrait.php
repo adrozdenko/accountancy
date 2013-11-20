@@ -47,8 +47,16 @@ trait EmailTrait
      */
     public function notificationEmailIsSentToWithTitleAndBody($emailAddress, $title, PyStringNode $body)
     {
-        throw new PendingException();
+        assertEquals($emailAddress, $this->mailer->getTo(), "Email address doesn't match in mailer");
+        assertEquals($title, $this->mailer->getTitle(), "Email title doesn't match in mailer");
+        assertEquals((string) $body, $this->mailer->getBody(), "Email body doesn't match in mailer");
     }
 
-
+    /**
+     * @Given /^notification email should not be sent$/
+     */
+    public function notificationEmailShouldNotBeSent()
+    {
+        assertFalse($this->mailer->isMailSent(), "Mail should not be sent");
+    }
 }

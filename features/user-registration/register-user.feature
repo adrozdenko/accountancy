@@ -47,6 +47,7 @@ Feature: Register User
             | "1" | "foo@example.com" | "bar"    | "Foo" |
 
         And I should receive <error-message> error
+        And notification email should not be sent
 
     Examples:
         | name  | email             | password | error-message                                   |

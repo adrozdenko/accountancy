@@ -10,6 +10,7 @@ use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\UserRegistration\Authentication;
 use Accountancy\Features\UserRegistration\ChangePassword;
+use Accountancy\Features\UserRegistration\ForgotPassword;
 use Accountancy\Features\UserRegistration\RegisterUser;
 use Accountancy\Features\UserRegistration\UpdateProfile;
 use Behat\Behat\Event\OutlineExampleEvent;
@@ -315,7 +316,19 @@ trait UserTrait
      */
     public function iRequestPasswordResetEmailFor($emailAddress)
     {
-        throw new PendingException();
+        $feature = new ForgotPassword();
+        $feature->setEmail($emailAddress)
+            ->setUsersCollection($this->registeredUsers)
+            ->setMailer($this->mailer)
+            ->setAuthenticationPayloadGenerator($this->authenticationPayloadGenerator);
+
+        try {
+            $feature->run();
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
+
+        $this->signedInUser = $feature->getUser();
     }
 
     /**
