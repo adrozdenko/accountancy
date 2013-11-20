@@ -5,8 +5,8 @@ Feature: Delete Account
 
     Scenario: I delete Account
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 0.00    | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "0.00"  | "1"         |
 
         When I delete Account "1"
         Then My Accounts should be:
@@ -14,14 +14,14 @@ Feature: Delete Account
 
     Scenario Outline: I delete Account and provide invalid data
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 0.00    | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "0.00"  | "1"         |
 
         When I delete Account <account-id>
         Then I should receive <error-message> error
         And My Accounts should be:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 0.00    | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "0.00"  | "1"         |
 
     Examples:
         | account-id | error-message           |

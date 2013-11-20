@@ -10,20 +10,20 @@ Feature: Create Counterparty
         When I create Counterparty with Name "Foo"
 
         Then my Counterparties should be:
-            | name |
-            | Foo  |
+            | name  |
+            | "Foo" |
 
     Scenario Outline: I create Counterparty with invalid data
         Given I have Counterparties:
-            | id | name |
-            | 1  | Foo  |
+            | id  | name  |
+            | "1" | "Foo" |
 
         When I create Counterparty with Name <name>
 
         Then I should receive <error-message> error
         And my Counterparties should be:
-            | id | name |
-            | 1  | Foo  |
+            | id  | name  |
+            | "1" | "Foo" |
 
     Examples:
         | name  | error-message                           |

@@ -5,8 +5,8 @@ Feature: Delete Category
 
     Scenario: I delete Category
         Given I have Categories:
-            | id | name |
-            | 1  | Foo  |
+            | id  | name  |
+            | "1" | "Foo" |
 
         When I delete Category "1"
 
@@ -15,15 +15,15 @@ Feature: Delete Category
 
     Scenario Outline: I delete Category and provide invalid data
         Given I have Categories:
-            | id | name |
-            | 1  | Foo  |
+            | id  | name  |
+            | "1" | "Foo" |
 
         When I delete Category <category-id>
 
         Then I should receive <error-message> error
         And My Categories should be:
-            | id | name |
-            | 1  | Foo  |
+            | id  | name  |
+            | "1" | "Foo" |
 
     Examples:
         | category-id | error-message             |

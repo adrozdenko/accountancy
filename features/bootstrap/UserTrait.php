@@ -10,7 +10,9 @@ use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\UserRegistration\Authentication;
 use Accountancy\Features\UserRegistration\ChangePassword;
+use Accountancy\Features\UserRegistration\RegisterUser;
 use Accountancy\Features\UserRegistration\UpdateProfile;
+use Behat\Behat\Event\OutlineExampleEvent;
 use Behat\Behat\Exception\BehaviorException;
 use Behat\Behat\Exception\ErrorException;
 use Behat\Behat\Exception\PendingException;
@@ -29,6 +31,11 @@ trait UserTrait
     protected $signedInUser;
 
     /**
+     * @var AuthenticationPayloadGeneratorStub
+     */
+    protected $authenticationPayloadGenerator;
+
+    /**
      * @param TableNode $usersTable
      *
      * @Given /^there are registered Users:$/
@@ -37,6 +44,10 @@ trait UserTrait
     {
         $this->registeredUsers = new UserCollection();
         foreach ($usersTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             $newUser = new User();
             if (isset($row['id'])) {
                 $newUser->setId($row['id']);
@@ -72,7 +83,19 @@ trait UserTrait
      */
     public function iRegisterUsingNameEmailPassword($name, $email, $password)
     {
-        throw new PendingException();
+        $feature = new RegisterUser();
+        $feature->setName($name)
+            ->setEmail($email)
+            ->setPassword($password)
+            ->setUserCollection($this->registeredUsers)
+            ->setMailer($this->mailer)
+            ->setAuthenticationPayloadGenerator($this->authenticationPayloadGenerator);
+
+        try {
+            $feature->run();
+        } catch (\Exception $e) {
+            $this->lastException = $e;
+        }
     }
 
     /**
@@ -88,6 +111,10 @@ trait UserTrait
         }
 
         foreach ($usersTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             assertArrayHasKey("email", $row, "'email' field must be present in 'registered Users should be' table");
             assertArrayHasKey($row['email'], $usersByEmail, sprintf("User with email '%s' doesn't exist", $row['email']));
             $user = $usersByEmail[$row['email']];
@@ -156,6 +183,10 @@ trait UserTrait
         $hash = $userTable->getHash();
 
         $row = $hash[0];
+
+        foreach ($row as $key => $value) {
+            $row[$key] = substr($value, 1, -1);
+        }
 
         assertInstanceOf('\\Accountancy\\Entity\\User', $this->signedInUser, 'User wasn\'t signed in');
 
@@ -228,6 +259,10 @@ trait UserTrait
 
         $row = $hash[0];
 
+        foreach ($row as $key => $value) {
+            $row[$key] = substr($value, 1, -1);
+        }
+
         $this->signedInUser = $this->registeredUsers->findUserByEmail($row['email']);
 
         if (!$this->signedInUser instanceof User) {
@@ -290,8 +325,19 @@ trait UserTrait
      */
     public function authenticationPayloadIsCreated($authenticationPayload)
     {
-        throw new PendingException();
     }
+
+    /**
+     * @param string $authenticationPayload
+     *
+     * @Given /^authentication payload "([^"]*)" is going to be created$/
+     */
+    public function authenticationPayloadIsGoingToBeCreated($authenticationPayload)
+    {
+        $this->authenticationPayloadGenerator = new AuthenticationPayloadGeneratorStub();
+        $this->authenticationPayloadGenerator->setPayload($authenticationPayload);
+    }
+
 
     /**
      * @param string $newName

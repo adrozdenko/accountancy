@@ -7,21 +7,21 @@ Feature: Register User
         Given there are registered Users:
             | id | email | password | name |
 
+        And  authentication payload <authentication-payload> is going to be created
+
         When I register using name <name> email <email> password <password>
 
-        Then authentication payload is created <authentication-payload>
-        And registered Users should be:
-            | email   | password | name   | authentication_payload   | is_email_verified |
-            | <email> | "/^.*$/" | <name> | <authentication-payload> | false             |
+        Then registered Users should be:
+            | email   | password   | name   | authentication_payload   | is_email_verified |
+            | <email> | <password> | <name> | <authentication-payload> | "false"           |
 
-        And notification email is sent to <email> with title "Welcome to Home Accountancy"
-        And notification email contains the following text:
+        And notification email is sent to <email> with title "Welcome to Home Accountancy" and greeting <greeting> and authentication payload <authentication-payload> and body:
         """
-        Dear<greeting>,
+        Dear:GREETING:,
         Welcome to Home Accountancy
 
-        Your email address  needs to be verified.
-        Please open https://example.com/verify-email/<authentication-payload> in your browser to verify your email address.
+        Your email address needs to be verified.
+        Please open https://example.com/verify-email/:AUTHENTICATION-PAYLOAD: in your browser to verify your email address.
 
         Best Regards,
 
@@ -29,20 +29,22 @@ Feature: Register User
 
     Examples:
         | name  | email             | password | greeting | authentication-payload |
-        | "Foo" | "foo@example.com" | "bar"    | " Foo"   | "some-code"            |
-        | ""    | "foo@example.com" | "bar"    | ""       | "another-code"         |
-        | "   " | "foo@example.com" | "bar"    | ""       | "foobarbaz"            |
+        | "Foo" | "foo@example.com" | "barbar" | " Foo"   | "some-code"            |
+        | ""    | "foo@example.com" | "barbar" | ""       | "another-code"         |
+        | "   " | "foo@example.com" | "barbar" | ""       | "foobarbaz"            |
 
     Scenario Outline: Visitor tries to register with invalid data
         Given there are registered Users:
-            | id | email             | password | name  |
-            | 1  | "foo@example.com" | "bar"    | "Foo" |
+            | id  | email             | password | name  |
+            | "1" | "foo@example.com" | "bar"    | "Foo" |
+
+        And  authentication payload "some-payload" is going to be created
 
         When I register using name <name> email <email> password <password>
 
         Then registered Users should be:
-            | id | email             | password | name  |
-            | 1  | "foo@example.com" | "bar"    | "Foo" |
+            | id  | email             | password | name  |
+            | "1" | "foo@example.com" | "bar"    | "Foo" |
 
         And I should receive <error-message> error
 

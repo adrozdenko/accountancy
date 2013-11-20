@@ -21,6 +21,10 @@ trait AccountTrait
     public function iHaveAccounts(TableNode $accountsTable)
     {
         foreach ($accountsTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             $account = new Account();
 
             if (isset($row['id'])) {
@@ -56,6 +60,11 @@ trait AccountTrait
         }
 
         foreach ($accountsTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
+
             assertArrayHasKey("name", $row, "'name' field must be present in 'My Accounts should be' table");
             assertArrayHasKey($row['name'], $accountsByName, sprintf("Account with name '%s' doesn't exist", $row['name']));
             $account = $accountsByName[$row['name']];

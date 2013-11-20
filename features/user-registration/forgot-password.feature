@@ -5,15 +5,14 @@ Feature: Forgot Password
 
     Scenario: Visitor requests password reset email
         Given there are registered Users:
-            | id | email              | name   | authentication_payload |
-            | 1  | "test@example.cmo" | "Test" | ""                     |
-            | 2  | "foo@bar.com"      | "Foo"  | ""                     |
+            | id  | email              | name   | authentication_payload |
+            | "1" | "test@example.cmo" | "Test" | ""                     |
+            | "2" | "foo@bar.com"      | "Foo"  | ""                     |
 
         When I request password reset email for "test@example.com"
 
         Then authentication payload is created "some-payload"
-        And notification email is sent to "test@exampel.com" with title "Password Reset"
-        And notification email contains the following text:
+        And notification email is sent to "test@exampel.com" with title "Password Reset" and body:
         """
         Dear Test,
 
@@ -22,22 +21,22 @@ Feature: Forgot Password
         """
 
         And registered Users should be:
-            | id | email              | name   | authentication_payload |
-            | 1  | "test@example.cmo" | "Test" | "some-payload"         |
-            | 2  | "foo@bar.com"      | "Foo"  | ""                     |
+            | id  | email              | name   | authentication_payload |
+            | "1" | "test@example.cmo" | "Test" | "some-payload"         |
+            | "2" | "foo@bar.com"      | "Foo"  | ""                     |
 
     Scenario Outline: Visitor requests password reset email using invalid data
         Given there are registered Users:
-            | id | email              | name   | authentication_payload |
-            | 1  | "test@example.cmo" | "Test" | ""                     |
-            | 2  | "foo@bar.com"      | "Foo"  | ""                     |
+            | id  | email              | name   | authentication_payload |
+            | "1" | "test@example.cmo" | "Test" | ""                     |
+            | "2" | "foo@bar.com"      | "Foo"  | ""                     |
 
         When I request password reset email for <email>
         Then I should not receive any error
         And registered Users should be:
-            | id | email              | name   | authentication_payload |
-            | 1  | "test@example.cmo" | "Test" | ""                     |
-            | 2  | "foo@bar.com"      | "Foo"  | ""                     |
+            | id  | email              | name   | authentication_payload |
+            | "1" | "test@example.cmo" | "Test" | ""                     |
+            | "2" | "foo@bar.com"      | "Foo"  | ""                     |
 
     Examples:
         | email  |

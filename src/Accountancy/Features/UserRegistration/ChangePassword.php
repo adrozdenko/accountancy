@@ -58,7 +58,7 @@ class ChangePassword
             throw new FeatureException("Password can not be empty");
         }
 
-        if (strlen($this->newPassword) < 6) {
+        if (strlen(trim($this->newPassword)) < 6) {
             throw new FeatureException("Password should be at least 6 characters long");
         }
 

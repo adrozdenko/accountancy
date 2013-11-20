@@ -5,17 +5,17 @@ Feature: Edit Account
 
     Scenario Outline: I edit account and provide invalid data
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 13.50   | 1           |
-            | 2  | Bar  | 13.50   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "13.50" | "1"         |
+            | "2" | "Bar" | "13.50" | "1"         |
 
         When I edit Account <account-id>, set name to <account-name>
 
         Then I should receive <error-message> error
         And My Accounts should be:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 13.50   | 1           |
-            | 2  | Bar  | 13.50   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "13.50" | "1"         |
+            | "2" | "Bar" | "13.50" | "1"         |
 
     Examples:
         | account-id | account-name | error-message                      |

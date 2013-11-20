@@ -21,6 +21,10 @@ trait CounterpartyTrait
     public function iHaveCounterparties(TableNode $counterpartiesTable)
     {
         foreach ($counterpartiesTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             $counterparty = new Counterparty();
 
             if (isset($row['id'])) {
@@ -66,6 +70,10 @@ trait CounterpartyTrait
         }
 
         foreach ($counterpartiesTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             assertArrayHasKey("name", $row, "'name' field must be present in 'My Counterparties should be' table");
             assertArrayHasKey($row['name'], $counterpartiesByName, sprintf("Counterparty with name '%s' doesn't exist", $row['name']));
             $counterparty = $counterpartiesByName[$row['name']];

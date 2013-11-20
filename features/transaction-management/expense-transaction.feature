@@ -5,55 +5,55 @@ Feature: Register Expense
 
     Scenario: I register Expense Transaction
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 15.14   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "15.14" | "1"         |
         And I have Categories:
-            | id | name |
-            | 1  | Bar  |
+            | id  | name  |
+            | "1" | "Bar" |
         And I have Counterparties:
-            | id | name |
-            | 1  | Baz  |
+            | id  | name  |
+            | "1" | "Baz" |
 
         When I register "4.11" Expense of currency "1" for Account "1" and Category "1" and Counterparty "1"
 
         Then My Accounts should be:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 11.03   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "11.03" | "1"         |
 
     Scenario: I register Expense Transaction to receive negative account balance
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 15.14   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "15.14" | "1"         |
         And I have Categories:
-            | id | name |
-            | 1  | Bar  |
+            | id  | name  |
+            | "1" | "Bar" |
         And I have Counterparties:
-            | id | name |
-            | 1  | Baz  |
+            | id  | name  |
+            | "1" | "Baz" |
 
         When I register "30.14" Expense of currency "1" for Account "1" and Category "1" and Counterparty "1"
 
         Then My Accounts should be:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | -15.00  | 1           |
+            | id  | name  | balance  | currency_id |
+            | "1" | "Foo" | "-15.00" | "1"         |
 
     Scenario Outline: I register Expense for incorrect account, currency, counterparty or with incorrect amount
         Given I have Accounts:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 15.14   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "15.14" | "1"         |
         And I have Categories:
-            | id | name |
-            | 1  | Bar
+            | id  | name  |
+            | "1" | "Bar" |
         And I have Counterparties:
-            | id | name |
-            | 1  | Baz  |
+            | id  | name  |
+            | "1" | "Baz" |
 
         When I register <sum> Expense of currency <currency-id> for Account <account-id> and Category <category-id> and Counterparty <counterparty-id>
 
         Then I should receive <error-message> error
         And My Accounts should be:
-            | id | name | balance | currency_id |
-            | 1  | Foo  | 15.14   | 1           |
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "15.14" | "1"         |
 
     Examples:
         | sum     | currency-id | account-id | counterparty-id | category-id | error-message                                 |

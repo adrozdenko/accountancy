@@ -47,6 +47,8 @@ class FeatureContext extends BehatContext
         $this->user->setCategories(new CategoryCollection());
         $this->user->setCounterparties(new CounterpartyCollection());
         $this->currencyCollection = new CurrencyCollection();
+
+        $this->mailer = new MailerStub();
     }
 
     /**

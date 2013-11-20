@@ -9,18 +9,18 @@ Feature: Create Category
 
         When I create Category "Foo"
         Then My Categories should be:
-            | name |
-            | Foo  |
+            | name  |
+            | "Foo" |
 
     Scenario Outline: I create invalid Category
         Given I have Categories:
-            | id | name |
-            | 1  | Zoo  |
+            | id  | name  |
+            | "1" | "Zoo" |
         When I create Category <category-name>
         Then I should receive <error-message> error
         And My Categories should be:
-            | id | name |
-            | 1  | Zoo  |
+            | id  | name  |
+            | "1" | "Zoo" |
 
     Examples:
         | category-name | error-message                    |

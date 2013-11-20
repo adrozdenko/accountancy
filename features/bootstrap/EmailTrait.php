@@ -12,24 +12,43 @@ use Behat\Gherkin\Node\PyStringNode;
 trait EmailTrait
 {
     /**
-     * @param string $emailAddress
-     * @param string $title
-     *
-     * @Given /^notification email is sent to "([^"]*)" with title "([^"]*)"$/
+     * @var MailerStub
      */
-    public function notificationEmailIsSentToWithTitle($emailAddress, $title)
+    protected $mailer;
+
+    /**
+     * @param string       $emailAddress
+     * @param string       $title
+     * @param string       $greeting
+     * @param string       $authenticationPayload
+     * @param PyStringNode $body
+     *
+     * @Given /^notification email is sent to "([^"]*)" with title "([^"]*)" and greeting "([^"]*)" and authentication payload "([^"]*)" and body:$/
+     */
+    public function notificationEmailIsSentToWithTitleAndGreetingAndAuthenticationPayloadAndBody($emailAddress, $title, $greeting, $authenticationPayload, PyStringNode $body)
+    {
+        $body = strtr($body, array(
+            ":GREETING:"               => $greeting,
+            ":AUTHENTICATION-PAYLOAD:" => $authenticationPayload,
+        ));
+
+        assertEquals($emailAddress, $this->mailer->getTo(), "Email address doesn't match in mailer");
+        assertEquals($title, $this->mailer->getTitle(), "Email title doesn't match in mailer");
+        assertEquals((string) $body, $this->mailer->getBody(), "Email body doesn't match in mailer");
+    }
+
+
+    /**
+     * @param string       $emailAddress
+     * @param string       $title
+     * @param PyStringNode $body
+     *
+     * @Given /^notification email is sent to "([^"]*)" with title "([^"]*)" and body:$/
+     */
+    public function notificationEmailIsSentToWithTitleAndBody($emailAddress, $title, PyStringNode $body)
     {
         throw new PendingException();
     }
 
-    /**
-     * @param PyStringNode $body
-     *
-     * @Given /^notification email contains the following text:$/
-     */
-    public function notificationEmailContainsTheFollowingText(PyStringNode $body)
-    {
-        throw new PendingException();
-    }
 
 }

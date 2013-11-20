@@ -21,15 +21,15 @@ trait CurrencyTrait
             $currency = new Currency();
 
             if (isset($row['id'])) {
-                $currency->setId($row['id']);
+                $currency->setId(substr($row['id'], 1, -1));
             }
 
             if (isset($row['name'])) {
-                $currency->setName($row['name']);
+                $currency->setName(substr($row['name'], 1, -1));
             }
 
             if (isset($row['code'])) {
-                $currency->setCode($row['code']);
+                $currency->setCode(substr($row['code'], 1, -1));
             }
 
             $this->currencyCollection->addCurrency($currency);

@@ -21,6 +21,10 @@ trait CategoryTrait
     public function iHaveCategories(TableNode $categoriesTable)
     {
         foreach ($categoriesTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             $category = new Category();
 
             if (isset($row['id'])) {
@@ -48,6 +52,10 @@ trait CategoryTrait
         }
 
         foreach ($categoriesTable->getHash() as $row) {
+            foreach ($row as $key => $value) {
+                $row[$key] = substr($value, 1, -1);
+            }
+
             assertArrayHasKey("name", $row, "'name' field must be present in 'My Categories should be' table");
             assertArrayHasKey($row['name'], $categoriesByName, sprintf("Category with name '%s' doesn't exist", $row['name']));
             $category = $categoriesByName[$row['name']];

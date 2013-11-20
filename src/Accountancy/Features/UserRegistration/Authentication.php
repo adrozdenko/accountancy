@@ -117,6 +117,10 @@ class Authentication
         }
 
         if ($this->authenticationPayload !== null) {
+            if (trim($this->authenticationPayload) === "") {
+                throw new FeatureException("Verification code is not valid");
+            }
+
             $this->user = $this->userCollection->findUserByAuthenticationPayload($this->authenticationPayload);
 
             if (!$this->user instanceof User) {
