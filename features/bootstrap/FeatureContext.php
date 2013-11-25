@@ -5,11 +5,6 @@
 
 namespace Accountancy;
 
-use Accountancy\Entity\Collection\AccountCollection;
-use Accountancy\Entity\Collection\CategoryCollection;
-use Accountancy\Entity\Collection\CounterpartyCollection;
-use Accountancy\Entity\Collection\CurrencyCollection;
-use Accountancy\Entity\User;
 use Behat\Behat\Context\BehatContext;
 
 /**
@@ -20,19 +15,10 @@ class FeatureContext extends BehatContext
     use AccountTrait, CurrencyTrait, CategoryTrait, CounterpartyTrait, UserTrait, EmailTrait, TransactionTrait;
 
     /**
-     * @var Accountancy\Entity\User
-     */
-    protected $user;
-
-    /**
      * @var \Accountancy\Features\FeatureException
      */
     protected $lastException;
 
-    /**
-     * @var CurrencyCollection
-     */
-    protected $currencyCollection;
 
     /**
      * Initializes context.
@@ -42,12 +28,6 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        $this->user = new User();
-        $this->user->setAccounts(new AccountCollection());
-        $this->user->setCategories(new CategoryCollection());
-        $this->user->setCounterparties(new CounterpartyCollection());
-        $this->currencyCollection = new CurrencyCollection();
-
         $this->mailer = new MailerStub();
     }
 
@@ -72,6 +52,6 @@ class FeatureContext extends BehatContext
      */
     public function iShouldNotReceiveAnyError()
     {
-        assertNotInstanceOf('\Exception', $this->lastException);
+        assertNotInstanceOf('\Exception', $this->lastException, (string) $this->lastException);
     }
 }

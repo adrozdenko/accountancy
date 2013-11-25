@@ -7,61 +7,61 @@ namespace Accountancy\Features\UserRegistration;
 
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\UsersGatewayInterface;
 
 /**
  * Class ChangePassword
  *
  * @package Accountancy\Features\UserRegistration
  */
-class ChangePassword
+class ChangePassword implements FeatureInterface
 {
     /**
-     * @var User
+     * @var UsersGatewayInterface
      */
-    protected $user;
+    protected $users;
 
     /**
-     * @var string
-     */
-    protected $newPassword;
-
-    /**
-     * @param string $newPassword
+     * @param \Accountancy\Gateway\UsersGatewayInterface $users
      *
      * @return $this
      */
-    public function setNewPassword($newPassword)
+    public function setUsers(UsersGatewayInterface $users)
     {
-        $this->newPassword = $newPassword;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return $this
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
+        $this->users = $users;
 
         return $this;
     }
 
     /**
      * Changes user's password
+     *
+     * @param Array $input
+     *
+     * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        if (trim($this->newPassword) === "") {
+        $user = $this->users->findUserById($input['user_id']);
+
+        if (!$user instanceof User) {
+            throw new FeatureException("User was not found");
+        }
+
+        if (trim($input['password']) === "") {
             throw new FeatureException("Password can not be empty");
         }
 
-        if (strlen(trim($this->newPassword)) < 6) {
+        if (strlen(trim($input['password'])) < 6) {
             throw new FeatureException("Password should be at least 6 characters long");
         }
 
-        $this->user->setPassword($this->newPassword);
+        $user->setPassword($input['password']);
+
+        $this->users->updateUser($user);
+
+        return array();
     }
 }

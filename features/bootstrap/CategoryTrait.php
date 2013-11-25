@@ -6,6 +6,7 @@
 namespace Accountancy;
 
 use Accountancy\Entity\Category;
+use Accountancy\Gateway\InMemory\CategoriesGateway;
 use Behat\Gherkin\Node\TableNode;
 use Accountancy\Features\CategoryManagement\CreateCategory;
 use Accountancy\Features\CategoryManagement\DeleteCategory;
@@ -14,16 +15,36 @@ use Accountancy\Features\CategoryManagement\EditCategory;
 trait CategoryTrait
 {
     /**
+     * @var CategoriesGatewayInterafce
+     */
+    protected $categories;
+
+    /**
+     * @return \Accountancy\Gateway\CategoriesGatewayInterafce
+     */
+    public function getCategoriesGateway()
+    {
+        if ($this->categories === null) {
+            $this->categories = new CategoriesGateway();
+        }
+
+        return $this->categories;
+    }
+
+    /**
      * @param TableNode $categoriesTable
      *
-     * @Given /^I have Categories:$/
+     * @Given /^there are Categories:$/
      */
-    public function iHaveCategories(TableNode $categoriesTable)
+    public function thereAreCategories(TableNode $categoriesTable)
     {
         foreach ($categoriesTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
+
+            $user = $this->getUsersGateway()->findUserById($row['user_id']);
+            assertInstanceOf('\\Accountancy\\Entity\\User', $user, sprintf("Categories should match to registered users, user '%s' not found", $row['user_id']));
 
             $category = new Category();
 
@@ -31,48 +52,48 @@ trait CategoryTrait
                 $category->setId($row['id']);
             }
 
+            if (isset($row['user_id'])) {
+                $category->setUserId($row['user_id']);
+            }
+
             if (isset($row['name'])) {
                 $category->setName($row['name']);
             }
 
-            $this->user->getCategories()->addCategory($category);
+            $this->getCategoriesGateway()->addCategory($category);
         }
     }
+
 
     /**
      * @param TableNode $categoriesTable
      *
-     * @Then /^My Categories should be:$/
+     * @Then /^Categories should be:$/
      */
-    public function myCategoriesShouldBe(TableNode $categoriesTable)
+    public function categoriesShouldBe(TableNode $categoriesTable)
     {
-        $categoriesByName = array();
-        foreach ($this->user->getCategories()->getCategories() as $category) {
-            $categoriesByName[$category->getName()] = $category;
-        }
-
         foreach ($categoriesTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
-            assertArrayHasKey("name", $row, "'name' field must be present in 'My Categories should be' table");
-            assertArrayHasKey($row['name'], $categoriesByName, sprintf("Category with name '%s' doesn't exist", $row['name']));
-            $category = $categoriesByName[$row['name']];
-
+            assertArrayHasKey("name", $row, "'name' field must be present in 'Categories should be' table");
+            assertArrayHasKey("user_id", $row, "'user_id' field must be present in 'Categories should be' table");
+            $category = $this->getCategoriesGateway()->findCategoryByUserIdAndName($row['user_id'], $row['name']);
+            assertInstanceOf("\\Accountancy\\Entity\\Category", $category, sprintf("Category with name '%s' doesn't exist", $row['name']));
 
             if (isset($row['id'])) {
                 assertEquals($row['id'], $category->getId(), sprintf("Id does not match for category '%s'", $row['name']));
+            }
+
+            if (isset($row['user_id'])) {
+                assertEquals($row['user_id'], $category->getUserId(), sprintf("userId does not match for category '%s'", $row['name']));
             }
 
             if (isset($row['name'])) {
                 assertEquals($row['name'], $category->getName(), sprintf("Name does not match for category '%s'", $row['name']));
             }
         }
-
-        $expected = count($categoriesTable->getHash());
-        $actual = count($categoriesByName);
-        assertEquals($expected, $actual, sprintf("Expected %s categories, got %s", $expected, $actual));
     }
 
     /**
@@ -83,11 +104,13 @@ trait CategoryTrait
     public function iCreateCategory($name)
     {
         $feature = new CreateCategory();
-        $feature->setUser($this->user)
-            ->setCategoryName($name);
+        $feature->setCategories($this->getCategoriesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'name' => $name,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -101,11 +124,13 @@ trait CategoryTrait
     public function iDeleteCategory($categoryId)
     {
         $feature = new DeleteCategory();
-        $feature->setUser($this->user)
-            ->setCategoryId($categoryId);
+        $feature->setCategories($this->getCategoriesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $categoryId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -120,12 +145,14 @@ trait CategoryTrait
     public function iEditCategorySetNameTo($categoryId, $name)
     {
         $feature = new EditCategory();
-        $feature->setUser($this->user)
-            ->setCategoryId($categoryId)
-            ->setNewName($name);
+        $feature->setCategories($this->getCategoriesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $categoryId,
+                'name' => $name,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }

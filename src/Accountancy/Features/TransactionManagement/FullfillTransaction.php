@@ -5,103 +5,60 @@
 
 namespace Accountancy\Features\TransactionManagement;
 
-use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\AccountsGatewayInterface;
 
 /**
  * Class FullfillTransaction
  *
  * @package Accountancy\Features\TransactionManagement
  */
-class FullfillTransaction
+class FullfillTransaction implements FeatureInterface
 {
     /**
-     * @var User
+     * @var AccountsGatewayInterface
      */
-    protected $user;
+    protected $accounts;
 
     /**
-     * @var integer
-     */
-    protected $accountId;
-
-    /**
-     * @var integer
-     */
-    protected $currencyId;
-
-
-    /**
-     * @var float
-     */
-    protected $amount = 0.0;
-
-    /**
-     * @param \Accountancy\Entity\User $user
+     * @param \Accountancy\Gateway\AccountsGatewayInterface $accounts
      *
      * @return $this
      */
-    public function setUser(User $user)
+    public function setAccounts(AccountsGatewayInterface $accounts)
     {
-        $this->user = $user;
+        $this->accounts = $accounts;
 
         return $this;
     }
 
     /**
-     * @param integer $accountId
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setAccountId($accountId)
-    {
-        $this->accountId = (int) $accountId;
-
-        return $this;
-    }
-
-    /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = (float) preg_replace('/^[^\d-]+/', '', $amount);
-    }
-
-    /**
-     * @param integer $currencyId
-     *
-     * @return $this
-     */
-    public function setCurrencyId($currencyId)
-    {
-        $this->currencyId = (int) $currencyId;
-
-        return $this;
-    }
-
-    /**
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-        $account = $this->user->getAccounts()->findAccountById($this->accountId);
+        $account = $this->accounts->findAccountById($input['account_id']);
 
-        if (is_null($account)) {
+        if (is_null($account) || $account->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Account doesn't exist");
         }
 
-        if ($account->getCurrencyId() != $this->currencyId) {
+        if ($account->getCurrencyId() != $input['currency_id']) {
             throw new FeatureException("Currency is't supported by account");
         }
 
-        if ($this->amount <= 0.0) {
+        if ((float) $input['amount'] <= 0.0) {
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $account->setBalance($this->amount);
+        $account->setBalance((float) $input['amount']);
 
-        $this->user->getAccounts()->updateAccounts($account);
+        $this->accounts->updateAccount($account);
+
+        return array();
     }
 }

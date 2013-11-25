@@ -6,67 +6,57 @@
 namespace Accountancy\Features\CategoryManagement;
 
 use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CategoriesGatewayInterface;
 
 /**
  * Class CreateCategory
  *
  * @package Accountancy\Features\AccountManagement
  */
-class CreateCategory
+class CreateCategory implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CategoriesGatewayInterface
      */
-    protected $user;
+    protected $categories;
 
     /**
-     * @var string
-     */
-    protected $categoryName;
-
-    /**
-     * @param string $categoryName
+     * @param \Accountancy\Gateway\CategoriesGatewayInterface $categories
      *
      * @return $this
      */
-    public function setCategoryName($categoryName)
+    public function setCategories(CategoriesGatewayInterface $categories)
     {
-        $this->categoryName = (string) $categoryName;
+        $this->categories = $categories;
 
         return $this;
     }
 
     /**
-     * @param \Accountancy\Entity\User $user
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        if (trim($this->categoryName) == '') {
+        if (trim($input['name']) == '') {
             throw new FeatureException("Category name can not be empty");
         }
 
-        if ($this->user->getCategories()->findCategoryByName($this->categoryName) instanceof Category) {
-            throw new FeatureException(sprintf("Category '%s' already exists", $this->categoryName));
+        if ($this->categories->findCategoryByUserIdAndName($input['user_id'], $input['name']) instanceof Category) {
+            throw new FeatureException(sprintf("Category '%s' already exists", $input['name']));
         }
 
         $category = new Category();
 
-        $category->setName($this->categoryName);
+        $category->setUserId($input['user_id']);
+        $category->setName($input['name']);
 
-        $this->user->getCategories()->addCategory($category);
+        $this->categories->addCategory($category);
+
+        return array();
     }
 }

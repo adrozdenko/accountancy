@@ -9,26 +9,52 @@ use Accountancy\Entity\Account;
 use Accountancy\Features\AccountManagement\CreateAccount;
 use Accountancy\Features\AccountManagement\DeleteAccount;
 use Accountancy\Features\AccountManagement\EditAccount;
+use Accountancy\Gateway\AccountsGatewayInterface;
+use Accountancy\Gateway\InMemory\AccountsGateway;
 use Behat\Gherkin\Node\TableNode;
 
 trait AccountTrait
 {
     /**
+     * @var AccountsGatewayInterface
+     */
+    protected $accounts;
+
+    /**
+     * @return \Accountancy\Gateway\AccountsGatewayInterface
+     */
+    public function getAccountsGateway()
+    {
+        if ($this->accounts === null) {
+            $this->accounts = new AccountsGateway();
+        }
+
+        return $this->accounts;
+    }
+
+    /**
      * @param TableNode $accountsTable
      *
-     * @Given /^I have Accounts:$/
+     * @Given /^there are Accounts:$/
      */
-    public function iHaveAccounts(TableNode $accountsTable)
+    public function thereAreAccounts(TableNode $accountsTable)
     {
         foreach ($accountsTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
+            $user = $this->getUsersGateway()->findUserById($row['user_id']);
+            assertInstanceOf('\\Accountancy\\Entity\\User', $user, sprintf("Accounts should match to registered users, user '%s' not found", $row['user_id']));
+
             $account = new Account();
 
             if (isset($row['id'])) {
                 $account->setId($row['id']);
+            }
+
+            if (isset($row['user_id'])) {
+                $account->setUserId($row['user_id']);
             }
 
             if (isset($row['name'])) {
@@ -43,32 +69,26 @@ trait AccountTrait
                 $account->setCurrencyId($row['currency_id']);
             }
 
-            $this->user->getAccounts()->addAccount($account);
+            $this->getAccountsGateway()->addAccount($account);
         }
     }
 
     /**
      * @param TableNode $accountsTable
      *
-     * @Then /^My Accounts should be:$/
+     * @Then /^Accounts should be:$/
      */
-    public function myAccountsShouldBe(TableNode $accountsTable)
+    public function accountsShouldBe(TableNode $accountsTable)
     {
-        $accountsByName = array();
-        foreach ($this->user->getAccounts()->getAccounts() as $account) {
-            $accountsByName[$account->getName()] = $account;
-        }
-
         foreach ($accountsTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
-
-            assertArrayHasKey("name", $row, "'name' field must be present in 'My Accounts should be' table");
-            assertArrayHasKey($row['name'], $accountsByName, sprintf("Account with name '%s' doesn't exist", $row['name']));
-            $account = $accountsByName[$row['name']];
-
+            assertArrayHasKey("name", $row, "'name' field must be present in 'Accounts should be' table");
+            assertArrayHasKey("user_id", $row, "'user_id' field must be present in 'Accounts should be' table");
+            $account = $this->getAccountsGateway()->findAccountByUserIdAndName($row['user_id'], $row['name']);
+            assertInstanceOf("\\Accountancy\\Entity\\Account", $account, sprintf("Account with name '%s' doesn't exist", $row['name']));
 
             if (isset($row['id'])) {
                 assertEquals($row['id'], $account->getId(), sprintf("Id does not match for account '%s'", $row['name']));
@@ -86,11 +106,8 @@ trait AccountTrait
                 assertEquals($row['currency_id'], $account->getCurrencyId(), sprintf("Currency does not match for account '%s'", $row['name']));
             }
         }
-
-        $expected = count($accountsTable->getHash());
-        $actual = count($accountsByName);
-        assertEquals($expected, $actual, sprintf("Expected %s accounts, got %s", $expected, $actual));
     }
+
 
     /**
      * @param string $name
@@ -101,13 +118,15 @@ trait AccountTrait
     public function iCreateAccountWithNameAndCurrency($name, $currencyId)
     {
         $feature = new CreateAccount();
-        $feature->setUser($this->user)
-            ->setAccountName($name)
-            ->setCurrencyId($currencyId)
-            ->setCurrencies($this->currencyCollection);
+        $feature->setAccounts($this->getAccountsGateway())
+            ->setCurrencies($this->getCurrenciesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'account_name' => $name,
+                'currency_id' => $currencyId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -121,11 +140,13 @@ trait AccountTrait
     public function iDeleteAccount($accountId)
     {
         $feature = new DeleteAccount();
-        $feature->setUser($this->user)
-            ->setAccountId($accountId);
+        $feature->setAccounts($this->getAccountsGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $accountId
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -140,15 +161,16 @@ trait AccountTrait
     public function iEditAccountSetNameTo($accountId, $name)
     {
         $feature = new EditAccount();
-        $feature->setUser($this->user)
-            ->setAccountId($accountId)
-            ->setNewName($name);
+        $feature->setAccounts($this->getAccountsGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $accountId,
+                'new_name' => $name
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
-
 }

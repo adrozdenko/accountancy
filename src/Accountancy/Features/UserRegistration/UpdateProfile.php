@@ -6,53 +6,53 @@
 namespace Accountancy\Features\UserRegistration;
 
 use Accountancy\Entity\User;
+use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\UsersGatewayInterface;
 
 /**
  * Class UpdateProfile
  *
  * @package Accountancy\Features\UserRegistration
  */
-class UpdateProfile
+class UpdateProfile implements FeatureInterface
 {
     /**
-     * @var User
+     * @var UsersGatewayInterface
      */
-    protected $user;
+    protected $users;
 
     /**
-     * @var string
-     */
-    protected $newName;
-
-    /**
-     * @param string $newName
+     * @param \Accountancy\Gateway\UsersGatewayInterface $users
      *
      * @return $this
      */
-    public function setNewName($newName)
+    public function setUsers(UsersGatewayInterface $users)
     {
-        $this->newName = $newName;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return $this
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
+        $this->users = $users;
 
         return $this;
     }
 
     /**
      * Updates personal information
+     * @param Array $input
+     *
+     * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        $this->user->setName($this->newName);
+        $user = $this->users->findUserById($input['user_id']);
+
+        if (!$user instanceof User) {
+            throw new FeatureException('User was not found');
+        }
+
+        $user->setName($input['name']);
+
+        $this->users->updateUser($user);
+
+        return array();
     }
 }

@@ -6,59 +6,51 @@
 namespace Accountancy\Features\CategoryManagement;
 
 
-use Accountancy\Entity\User;
+use Accountancy\Entity\Category;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CategoriesGatewayInterface;
 
 /**
  * Class DeleteCategory
  *
  * @package Accountancy\Features\AccountManagement
  */
-class DeleteCategory
+class DeleteCategory implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CategoriesGatewayInterface
      */
-    protected $user;
+    protected $categories;
 
     /**
-     * @var int
+     * @param \Accountancy\Gateway\CategoriesGatewayInterface $categories
      */
-    protected $categoryId;
-
-    /**
-     * @param int $categoryId
-     *
-     * @return $this
-     */
-    public function setCategoryId($categoryId)
+    public function setCategories(CategoriesGatewayInterface $categories)
     {
-        $this->categoryId = (int) $categoryId;
-
-        return $this;
+        $this->categories = $categories;
     }
 
     /**
-     * @param \Accountancy\Entity\User $user
+     * @param Array $input
      *
-     * @return $this
+     * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function setUser($user)
+    public function run(Array $input)
     {
-        $this->user = $user;
+        $category = $this->categories->findCategoryById($input['id']);
 
-        return $this;
-    }
-
-    /**
-     * @throws \Accountancy\Features\FeatureExceptions
-     */
-    public function run()
-    {
-        try {
-            $this->user->getCategories()->deleteCategory($this->categoryId);
-        } catch (\LogicException $e) {
+        if (!$category instanceof Category) {
             throw new FeatureException("Category does not exist");
         }
+
+        if ($category->getUserId() !== (int) $input['user_id']) {
+            throw new FeatureException("Category does not exist");
+        }
+
+        $this->categories->deleteCategory($input['id']);
+
+        return array();
     }
 }

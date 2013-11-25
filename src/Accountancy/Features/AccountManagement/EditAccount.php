@@ -1,96 +1,69 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Petro_Svintsitskyi
- * Date: 11/6/13
- * Time: 11:11 PM
+ *
  */
 
 namespace Accountancy\Features\AccountManagement;
 
-use Accountancy\Entity\User;
-use Accountancy\Entity\Account;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\AccountsGatewayInterface;
 
 /**
  * Class EditAccount
  *
  * @package Accountancy\Features\AccountManagement
  */
-class EditAccount
+class EditAccount implements FeatureInterface
 {
     /**
-     * @var User
+     * @var AccountsGatewayInterface
      */
-    protected $user;
+    protected $accounts;
 
     /**
-     * @var int
-     */
-    protected $accountId;
-
-    /**
-     * @var string
-     */
-    protected $newName;
-
-    /**
-     * @param int $accountId
+     * @param AccountsGatewayInterface $accounts
      *
      * @return $this
      */
-    public function setAccountId($accountId)
+    public function setAccounts(AccountsGatewayInterface $accounts)
     {
-        $this->accountId = (int) $accountId;
+        $this->accounts = $accounts;
 
         return $this;
     }
 
     /**
-     * @param string $newName
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setNewName($newName)
-    {
-        $this->newName = (string) $newName;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return $this
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @throws \Accountancy\Features\FeatureException
+     *
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        $account = $this->user->getAccounts()->findAccountById($this->accountId);
+        $account = $this->accounts->findAccountById($input['id']);
 
         if (is_null($account)) {
             throw new FeatureException("Account doesn't exist");
         }
 
-        if (trim($this->newName) == '') {
+        if ($account->getUserId() !== (int) $input['user_id']) {
+            throw new FeatureException("Account doesn't exist");
+        }
+
+        if (trim($input['new_name']) == '') {
             throw new FeatureException("Name of Account can not be empty");
         }
 
-        if ($this->user->getAccounts()->findAccountByName($this->newName) instanceof Account) {
-            throw new FeatureException(sprintf("Account '%s' already exists", $this->newName));
+        if ($this->accounts->findAccountByUserIdAndName($input['user_id'], $input['new_name'])) {
+            throw new FeatureException(sprintf("Account '%s' already exists", $input['new_name']));
         }
 
-        $account->setName($this->newName);
+        $account->setName($input['new_name']);
 
-        $this->user->getAccounts()->updateAccounts($account);
+        $this->accounts->updateAccount($account);
+
+        return array();
     }
 }

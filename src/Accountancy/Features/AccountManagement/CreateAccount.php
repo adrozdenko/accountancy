@@ -6,79 +6,34 @@
 namespace Accountancy\Features\AccountManagement;
 
 use Accountancy\Entity\Account;
-use Accountancy\Entity\Collection\CurrencyCollection;
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\AccountsGatewayInterface;
+use Accountancy\Gateway\CurrenciesGatewayInterface;
 
 /**
  * Class CreateAccount
  *
  * @package Accountancy\Features\AccountManagement
  */
-class CreateAccount
+class CreateAccount implements FeatureInterface
 {
     /**
-     * @var User
-     */
-    protected $user;
-
-    /**
-     * @var string
-     */
-    protected $accountName;
-
-    /**
-     * @var int
-     */
-    protected $currencyId;
-
-    /**
-     * @var CurrencyCollection
+     * @var CurrenciesGatewayInterface
      */
     protected $currencies;
 
     /**
-     * @param string $accountName
-     *
-     * @return CreateAccount
+     * @var AccountsGatewayInterface
      */
-    public function setAccountName($accountName)
-    {
-        $this->accountName = $accountName;
-
-        return $this;
-    }
+    protected $accounts;
 
     /**
-     * @param int $currencyId
-     *
-     * @return CreateAccount
-     */
-    public function setCurrencyId($currencyId)
-    {
-        $this->currencyId = $currencyId;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return CreateAccount
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\CurrencyCollection $currencies
+     * @param \Accountancy\Gateway\CurrenciesGatewayInterface $currencies
      *
      * @return $this
      */
-    public function setCurrencies(CurrencyCollection $currencies)
+    public function setCurrencies(CurrenciesGatewayInterface $currencies)
     {
         $this->currencies = $currencies;
 
@@ -86,28 +41,46 @@ class CreateAccount
     }
 
     /**
-     * @throws \Accountancy\Features\FeatureException
+     * @param AccountsGatewayInterface $accounts
+     *
+     * @return $this
      */
-    public function run()
+    public function setAccounts(AccountsGatewayInterface $accounts)
     {
-        $account = new Account();
+        $this->accounts = $accounts;
 
-        if (trim($this->accountName) == '') {
+        return $this;
+    }
+
+    /**
+     * @param array $input
+     *
+     * @throws \Accountancy\Features\FeatureException
+     *
+     * @return Array
+     */
+    public function run(Array $input)
+    {
+        if (trim($input['account_name']) == '') {
             throw new FeatureException("Name of Account can not be empty");
         }
 
-        if ($this->user->getAccounts()->findAccountByName($this->accountName) instanceof Account) {
-            throw new FeatureException(sprintf("Account '%s' already exists", $this->accountName));
+        if ($this->accounts->findAccountByUserIdAndName($input['user_id'], $input['account_name'])) {
+            throw new FeatureException(sprintf("Account '%s' already exists", $input['account_name']));
         }
 
-        $account->setName($this->accountName);
-
-        if (!$this->currencies->hasCurrency($this->currencyId)) {
+        if (!$this->currencies->hasCurrency($input['currency_id'])) {
             throw new FeatureException("Invalid currency provided");
         }
 
-        $account->setCurrencyId($this->currencyId);
+        $account = new Account();
 
-        $this->user->getAccounts()->addAccount($account);
+        $account->setUserId($input['user_id']);
+        $account->setName($input['account_name']);
+        $account->setCurrencyId($input['currency_id']);
+
+        $this->accounts->addAccount($account);
+
+        return array('id' => $account->getId());
     }
 }

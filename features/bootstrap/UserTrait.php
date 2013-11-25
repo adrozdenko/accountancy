@@ -6,35 +6,44 @@
 
 namespace Accountancy;
 
-use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\UserRegistration\Authentication;
 use Accountancy\Features\UserRegistration\ChangePassword;
 use Accountancy\Features\UserRegistration\ForgotPassword;
 use Accountancy\Features\UserRegistration\RegisterUser;
 use Accountancy\Features\UserRegistration\UpdateProfile;
-use Behat\Behat\Event\OutlineExampleEvent;
-use Behat\Behat\Exception\BehaviorException;
-use Behat\Behat\Exception\ErrorException;
-use Behat\Behat\Exception\PendingException;
+use Accountancy\Gateway\InMemory\UsersGateway;
+use Accountancy\Gateway\UsersGatewayInterface;
 use Behat\Gherkin\Node\TableNode;
 
 trait UserTrait
 {
     /**
-     * @var UserCollection
+     * @var UsersGatewayInterface
      */
-    protected $registeredUsers;
+    protected $users;
 
     /**
-     * @var User
+     * @var int
      */
-    protected $signedInUser;
+    protected $signedInUserId;
 
     /**
      * @var AuthenticationPayloadGeneratorStub
      */
     protected $authenticationPayloadGenerator;
+
+    /**
+     * @return \Accountancy\UsersGatewayInterface
+     */
+    public function getUsersGateway()
+    {
+        if ($this->users === null) {
+            $this->users = new UsersGateway();
+        }
+
+        return $this->users;
+    }
 
     /**
      * @param TableNode $usersTable
@@ -43,13 +52,13 @@ trait UserTrait
      */
     public function thereAreRegisteredUsers(TableNode $usersTable)
     {
-        $this->registeredUsers = new UserCollection();
         foreach ($usersTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
             $newUser = new User();
+
             if (isset($row['id'])) {
                 $newUser->setId($row['id']);
             }
@@ -71,7 +80,7 @@ trait UserTrait
             if (isset($row['authentication_payload'])) {
                 $newUser->setAuthenticationPayload($row['authentication_payload']);
             }
-            $this->registeredUsers->addUser($newUser);
+            $this->getUsersGateway()->addUser($newUser);
         }
     }
 
@@ -85,18 +94,37 @@ trait UserTrait
     public function iRegisterUsingNameEmailPassword($name, $email, $password)
     {
         $feature = new RegisterUser();
-        $feature->setName($name)
-            ->setEmail($email)
-            ->setPassword($password)
-            ->setUserCollection($this->registeredUsers)
+        $feature->setUsers($this->getUsersGateway())
             ->setMailer($this->mailer)
             ->setAuthenticationPayloadGenerator($this->authenticationPayloadGenerator);
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
+    }
+
+    /**
+     * @Given /^I\'m not signed in$/
+     */
+    public function iMNotSignedIn()
+    {
+        $this->signedInUserId = null;
+    }
+
+    /**
+     * @param integer $userId
+     *
+     * @Given /^I become signed in User with Id "([^"]*)"$/
+     */
+    public function iBecomeSignedInUserWithId($userId)
+    {
+        assertEquals($userId, $this->signedInUserId, "User was not signed in");
     }
 
     /**
@@ -106,19 +134,14 @@ trait UserTrait
      */
     public function registeredUsersShouldBe(TableNode $usersTable)
     {
-        $usersByEmail = array();
-        foreach ($this->registeredUsers->getUsers() as $user) {
-            $usersByEmail[$user->getEmail()] = $user;
-        }
-
         foreach ($usersTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
             assertArrayHasKey("email", $row, "'email' field must be present in 'registered Users should be' table");
-            assertArrayHasKey($row['email'], $usersByEmail, sprintf("User with email '%s' doesn't exist", $row['email']));
-            $user = $usersByEmail[$row['email']];
+            $user = $this->getUsersGateway()->findUserByEmail($row['email']);
+            assertInstanceOf("\\Accountancy\\Entity\\User", $user, sprintf("User with email '%s' doesn't exist", $row['email']));
 
 
             if (isset($row['id'])) {
@@ -145,10 +168,6 @@ trait UserTrait
                 assertEquals($row['authentication_payload'], $user->getAuthenticationPayload(), sprintf("Authentication payload does not match for user '%s'", $row['email']));
             }
         }
-
-        $expected = count($usersTable->getHash());
-        $actual = count($usersByEmail);
-        assertEquals($expected, $actual, sprintf("Expected %s registered users, got %s", $expected, $actual));
     }
 
     /**
@@ -161,62 +180,16 @@ trait UserTrait
     {
         $feature = new Authentication();
 
-        $feature->setUserCollection($this->registeredUsers)
-            ->setEmail($email)
-            ->setPassword($password);
+        $feature->setUsers($this->getUsersGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'email' => $email,
+                'password' => $password,
+            ));
+            $this->signedInUserId = $output['signed_in_user_id'];
         } catch (\Exception $e) {
             $this->lastException = $e;
-        }
-
-        $this->signedInUser = $feature->getUser();
-    }
-
-    /**
-     * @param TableNode $userTable
-     *
-     * @Then /^I become a User with the following properties:$/
-     */
-    public function iBecomeAUserWithTheFollowingProperties(TableNode $userTable)
-    {
-        $hash = $userTable->getHash();
-
-        $row = $hash[0];
-
-        foreach ($row as $key => $value) {
-            $row[$key] = substr($value, 1, -1);
-        }
-
-        assertInstanceOf('\\Accountancy\\Entity\\User', $this->signedInUser, 'User wasn\'t signed in');
-
-        if (isset($row['id'])) {
-            assertEquals($row['id'], $this->signedInUser->getId(), 'Id doesn\'t match for signed in user');
-        }
-
-        if (isset($row['password'])) {
-            assertEquals($row['password'], $this->signedInUser->getPassword(), 'Password doesn\'t match for signed in user');
-        }
-
-        if (isset($row['email'])) {
-            assertEquals($row['email'], $this->signedInUser->getEmail(), 'Email doesn\'t match for signed in user');
-        }
-
-        if (isset($row['name'])) {
-            assertEquals($row['name'], $this->signedInUser->getName(), 'Name doesn\'t match for signed in user');
-        }
-
-        if (isset($row['is_authenticated'])) {
-            assertEquals($row['is_authenticated'] === 'true', $this->signedInUser->isAuthenticated(), 'Authentication flag doesn\'t match');
-        }
-
-        if (isset($row['is_email_verified'])) {
-            assertEquals($row['is_email_verified'] === 'true', $this->signedInUser->isEmailVerified(), 'Email verification flag doesn\'t match');
-        }
-
-        if (isset($row['authentication_payload'])) {
-            assertEquals($row['authentication_payload'], $this->signedInUser->getAuthenticationPayload(), 'Authentication payload doesn\'t match for signed in user');
         }
     }
 
@@ -229,16 +202,17 @@ trait UserTrait
     {
         $feature = new Authentication();
 
-        $feature->setUserCollection($this->registeredUsers)
+        $feature->setUsers($this->getUsersGateway())
             ->setAuthenticationPayload($authenticationPayload);
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'authentication_payload' => $authenticationPayload,
+            ));
+            $this->signedInUserId = $output['signed_in_user_id'];
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
-
-        $this->signedInUser = $feature->getUser();
     }
 
     /**
@@ -246,49 +220,7 @@ trait UserTrait
      */
     public function iShouldNotBecomeAnAuthenticatedUser()
     {
-        assertNotInstanceOf('\\Accountancy\\Entity\\User', $this->signedInUser);
-    }
-
-    /**
-     * @param TableNode $userTable
-     *
-     * @Given /^I am a User with the following properties:$/
-     */
-    public function iAmAUserWithTheFollowingProperties(TableNode $userTable)
-    {
-        $hash = $userTable->getHash();
-
-        $row = $hash[0];
-
-        foreach ($row as $key => $value) {
-            $row[$key] = substr($value, 1, -1);
-        }
-
-        $this->signedInUser = $this->registeredUsers->findUserByEmail($row['email']);
-
-        if (!$this->signedInUser instanceof User) {
-            throw new BehaviorException(sprintf("User '%s' should be registered using 'there are registered users table'", $row['email']));
-        }
-
-        if (isset($row['id'])) {
-            $this->signedInUser->setId($row['id']);
-        }
-
-        if (isset($row['password'])) {
-            $this->signedInUser->setPassword($row['password']);
-        }
-
-        if (isset($row['email'])) {
-            $this->signedInUser->setEmail($row['email']);
-        }
-
-        if (isset($row['is_authenticated'])) {
-            $this->signedInUser->setAuthenticated($row['is_authenticated'] === 'true');
-        }
-
-        if (isset($row['is_email_verified'])) {
-            $this->signedInUser->setEmailVerified($row['is_email_verified'] === 'true');
-        }
+        assertNull($this->signedInUserId, "User should not be signed in");
     }
 
     /**
@@ -299,11 +231,13 @@ trait UserTrait
     public function iChangeMyPasswordTo($newPassword)
     {
         $feature = new ChangePassword();
-        $feature->setUser($this->signedInUser)
-            ->setNewPassword($newPassword);
+        $feature->setUsers($this->getUsersGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'password' => $newPassword,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -317,18 +251,19 @@ trait UserTrait
     public function iRequestPasswordResetEmailFor($emailAddress)
     {
         $feature = new ForgotPassword();
-        $feature->setEmail($emailAddress)
-            ->setUsersCollection($this->registeredUsers)
+        $feature->setUsers($this->getUsersGateway())
             ->setMailer($this->mailer)
             ->setAuthenticationPayloadGenerator($this->authenticationPayloadGenerator);
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'email' => $emailAddress,
+            ));
+
+            $this->signedInUserId = $output['signed_in_user_id'];
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
-
-        $this->signedInUser = $feature->getUser();
     }
 
     /**
@@ -360,13 +295,26 @@ trait UserTrait
     public function iUpdateMyProfileSetName($newName)
     {
         $feature = new UpdateProfile();
-        $feature->setUser($this->signedInUser)
-            ->setNewName($newName);
+        $feature->setUsers($this->getUsersGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'name' => $newName,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
     }
+
+    /**
+     * @param int $userId
+     *
+     * @Given /^I am signed in as User with Id "([^"]*)"$/
+     */
+    public function iAmSignedInAsUserWithId($userId)
+    {
+        $this->signedInUserId = $userId;
+    }
+
 }

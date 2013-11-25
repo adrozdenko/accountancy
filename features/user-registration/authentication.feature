@@ -5,31 +5,43 @@ Feature: User Authentication
 
     Scenario: Visitor becomes authenticated using email and password
         Given there are registered Users:
-            | id  | email             | password | is_authenticated | is_email_verified |
-            | "1" | "foo@example.com" | "bar"    | "false"          | "true"            |
+            | id  | email             | password | is_email_verified |
+            | "1" | "foo@example.com" | "bar"    | "true"            |
+
+        And I'm not signed in
 
         When I sign in using email "foo@example.com" and password "bar"
 
-        Then I become a User with the following properties:
-            | id  | email             | password | is_authenticated |
-            | "1" | "foo@example.com" | "bar"    | "true"           |
+        Then I should not receive any error
+
+        And I become signed in User with Id "1"
+
+        And registered Users should be:
+            | id  | email             | password | is_email_verified |
+            | "1" | "foo@example.com" | "bar"    | "true"            |
 
     Scenario: Visitor becomes authenticated using authentication payload
         Given there are registered Users:
-            | id  | email             | password | is_authenticated  | authentication_payload | is_email_verified |
-            | "1" | "foo@example.com" | "bar"    | "false"           | "baz"                  | "false"           |
+            | id  | email             | password | authentication_payload | is_email_verified |
+            | "1" | "foo@example.com" | "bar"    | "baz"                  | "false"           |
+
+        And I'm not signed in
 
         When I sign in using authentication payload "baz"
 
-        Then I become a User with the following properties:
-            | id  | email             | password | is_authenticated | authentication_payload | is_email_verified |
-            | "1" | "foo@example.com" | "bar"    | "true"           | ""                     | "true"            |
+        Then I should not receive any error
+
+        And I become signed in User with Id "1"
+
+        And registered Users should be:
+            | id  | email             | password | authentication_payload | is_email_verified |
+            | "1" | "foo@example.com" | "bar"    | ""                     | "true"            |
 
     Scenario Outline: Visitor tries become authenticated using invalid email and password
         Given there are registered Users:
-            | id  | email                      | password | is_authenticated | is_email_verified |
-            | "1" | "foo@example.com"          | "bar"    | "false"          | "true"            |
-            | "2" | "not-verified@example.com" | "bar"    | "false"          | "false"           |
+            | id  | email                      | password | is_email_verified |
+            | "1" | "foo@example.com"          | "bar"    | "true"            |
+            | "2" | "not-verified@example.com" | "bar"    | "false"           |
 
         When I sign in using email <email> and password <password>
 
@@ -45,9 +57,9 @@ Feature: User Authentication
 
     Scenario Outline: Visitor tries become authenticated using invalid authentication payload
         Given there are registered Users:
-            | id  | email                      | password | is_authenticated | is_email_verified | authentication_payload |
-            | "1" | "verified@expample.com"    | "bar"    | "false"          | "true"            | ""                     |
-            | "2" | "not-verified@example.com" | "bar"    | "false"          | "false"           | "bar"                  |
+            | id  | email                      | password | is_email_verified | authentication_payload |
+            | "1" | "verified@expample.com"    | "bar"    | "true"            | ""                     |
+            | "2" | "not-verified@example.com" | "bar"    | "false"           | "bar"                  |
 
         When I sign in using authentication payload <authentication-payload>
 

@@ -9,15 +9,13 @@ Feature: Update Profile
             | "1" | "foo@expample.com" | "foo" |
             | "2" | "bar@expample.com" | "bar" |
 
-        And I am a User with the following properties:
-            | id  | email              | name  |
-            | "1" | "foo@expample.com" | "foo" |
+        And I am signed in as User with Id "1"
 
         When I update my profile, set name "baz"
 
-        Then I become a User with the following properties:
-            | id  | email              | name  |
-            | "1" | "foo@expample.com" | "baz" |
+        Then I should not receive any error
+
+        And I become signed in User with Id "1"
 
         And registered Users should be:
             | id  | email              | name  |

@@ -5,80 +5,56 @@
 
 namespace Accountancy\Features\CategoryManagement;
 
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CategoriesGatewayInterface;
 
 /**
  * Class EditCategory
  *
  * @package Accountancy\Features\AccountManagement
  */
-class EditCategory
+class EditCategory implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CategoriesGatewayInterface
      */
-    protected $user;
+    protected $categories;
 
     /**
-     * @var integer
+     * @param \Accountancy\Gateway\CategoriesGatewayInterface $categories
      */
-    protected $categoryId;
-
-    /**
-     * @param integer $categoryId
-     *
-     * @return $this
-     */
-    public function setCategoryId($categoryId)
+    public function setCategories(CategoriesGatewayInterface $categories)
     {
-        $this->categoryId = (int) $categoryId;
-
-        return $this;
+        $this->categories = $categories;
     }
 
     /**
-     * @param string $newName
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setNewName($newName)
-    {
-        $this->newName = (string) $newName;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return $this
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-
-        $category = $this->user->getCategories()->findCategoryById($this->categoryId);
+        $category = $this->categories->findCategoryById($input['id']);
 
         if (is_null($category)) {
             throw new FeatureException("Category does not exist");
         }
 
-        if (trim($this->newName) == '') {
+        if ($category->getUserId() !== (int) $input['user_id']) {
+            throw new FeatureException("Category does not exist");
+        }
+
+        if (trim($input['name']) == '') {
             throw new FeatureException("Category name can not be empty");
         }
 
-        $category->setName($this->newName);
+        $category->setName($input['name']);
 
-        $this->user->getCategories()->updateCategories($category);
+        $this->categories->updateCategory($category);
+
+        return array();
     }
 }

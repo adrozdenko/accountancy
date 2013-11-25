@@ -5,79 +5,60 @@
 
 namespace Accountancy\Features\CounterpartyManagement;
 
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CounterpartiesGatewayInterface;
 
 /**
  * Class EditCategory
  *
  * @package Accountancy\Features\CounterpartyManagement
  */
-class EditCounterparty
+class EditCounterparty implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CounterpartiesGatewayInterface
      */
-    protected $user;
+    protected $counterparties;
 
     /**
-     * @var integer
-     */
-    protected $counterpartyId;
-
-    /**
-     * @param integer $counterpartyId
+     * @param \Accountancy\Gateway\CounterpartiesGatewayInterface $counterparties
      *
      * @return $this
      */
-    public function setCounterpartyId($counterpartyId)
+    public function setCounterparties(CounterpartiesGatewayInterface $counterparties)
     {
-        $this->counterpartyId = (int) $counterpartyId;
+        $this->counterparties = $counterparties;
 
         return $this;
     }
 
     /**
-     * @param string $newName
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setNewCounterpartyName($newName)
-    {
-        $this->newName = (string) $newName;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return $this
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-        $counterparty = $this->user->getCounterparties()->findCounterpartyById($this->counterpartyId);
+        $counterparty = $this->counterparties->findCounterpartyById($input['id']);
 
         if (is_null($counterparty)) {
             throw new FeatureException("Counterparty doesn't exist");
         }
 
-        if (trim($this->newName) == '') {
+        if ($counterparty->getUserId() !== (int) $input['user_id']) {
+            throw new FeatureException("Counterparty doesn't exist");
+        }
+
+        if (trim($input['name']) == '') {
             throw new FeatureException("Name of Counterparty can not be empty");
         }
 
-        $counterparty->setName($this->newName);
+        $counterparty->setName($input['name']);
 
-        $this->user->getCounterparties()->updateCounterparties($counterparty);
+        $this->counterparties->updateCounterparty($counterparty);
+
+        return array();
     }
 }

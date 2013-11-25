@@ -23,13 +23,15 @@ trait TransactionTrait
     public function iAddFundsToAccount($amount, $currencyId, $accountId)
     {
         $feature = new FullfillTransaction();
-        $feature->setUser($this->user)
-            ->setCurrencyId($currencyId)
-            ->setAccountId($accountId)
-            ->setAmount($amount);
+        $feature->setAccounts($this->getAccountsGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'amount' => $amount,
+                'currency_id' => $currencyId,
+                'account_id' => $accountId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -47,14 +49,19 @@ trait TransactionTrait
     public function iRegisterExpenseForAccountAndCategoryAndCounterparty($amount, $currencyId, $accountId, $categoryId, $counterpartyId)
     {
         $feature = new ExpenseTransaction();
-        $feature->setUser($this->user)
-            ->setCurrencyId($currencyId)
-            ->setAccountId($accountId)
-            ->setCategoryId($categoryId)
-            ->setCounterpartyId($counterpartyId)
-            ->setAmount($amount);
+        $feature->setAccounts($this->getAccountsGateway())
+            ->setCounterparties($this->getCounterpartiesGateway())
+            ->setCategories($this->getCategoriesGateway());
+
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'amount' => $amount,
+                'currency_id' => $currencyId,
+                'account_id' => $accountId,
+                'category_id' => $categoryId,
+                'counterparty_id' => $counterpartyId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -72,14 +79,19 @@ trait TransactionTrait
     public function iRegisterIncomeForAccountAndCategoryAndCounterparty($amount, $currencyId, $accountId, $categoryId, $counterpartyId)
     {
         $feature = new IncomeTransaction();
-        $feature->setUser($this->user)
-            ->setCurrencyId($currencyId)
-            ->setAccountId($accountId)
-            ->setCategoryId($categoryId)
-            ->setCounterpartyId($counterpartyId)
-            ->setAmount($amount);
+        $feature->setAccounts($this->getAccountsGateway())
+            ->setCategories($this->getCategoriesGateway())
+            ->setCounterparties($this->getCounterPartiesGateway());
+
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'amount' => $amount,
+                'currency_id' => $currencyId,
+                'account_id' => $accountId,
+                'category_id' => $categoryId,
+                'counterparty_id' => $counterpartyId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -95,12 +107,15 @@ trait TransactionTrait
     public function iRegisterTransferFromAccountToAccountAndCategoryAndCounterparty($amount, $fromAccountId, $toAccountId)
     {
         $feature = new TransferTransaction();
-        $feature->setUser($this->user)
-            ->setFromAccountId($fromAccountId)
-            ->setToAccountId($toAccountId)
-            ->setAmount($amount);
+        $feature->setAccounts($this->getAccountsGateway());
+
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'amount' => $amount,
+                'from_account_id' => $fromAccountId,
+                'to_account_id' => $toAccountId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }

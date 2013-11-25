@@ -5,148 +5,108 @@
 
 namespace Accountancy\Features\TransactionManagement;
 
-use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\AccountsGatewayInterface;
+use Accountancy\Gateway\CategoriesGatewayInterface;
+use Accountancy\Gateway\CounterpartiesGatewayInterface;
 
 /**
  * Class ExpenseTransaction
  *
  * @package Accountancy\Features\TransactionManagement
  */
-class ExpenseTransaction
+class ExpenseTransaction implements FeatureInterface
 {
     /**
-     * @var User
+     * @var AccountsGatewayInterface
      */
-    protected $user;
+    protected $accounts;
 
     /**
-     * @var integer
+     * @var CounterpartiesGatewayInterface
      */
-    protected $accountId;
+    protected $counterparties;
 
     /**
-     * @var integer
+     * @var CategoriesGatewayInterface
      */
-    protected $currencyId;
+    protected $categories;
 
     /**
-     * @var integer
-     */
-    protected $categoryId;
-
-    /**
-     * @var integer
-     */
-    protected $counterpartyId;
-
-    /**
-     * @var float
-     */
-    protected $amount = 0.0;
-
-    /**
-     * @param \Accountancy\Entity\User $user
+     * @param AccountsGatewayInterface $accounts
      *
      * @return $this
      */
-    public function setUser(User $user)
+    public function setAccounts(AccountsGatewayInterface $accounts)
     {
-        $this->user = $user;
+        $this->accounts = $accounts;
 
         return $this;
     }
 
     /**
-     * @param integer $accountId
+     * @param CategoriesGatewayInterface $categories
      *
      * @return $this
      */
-    public function setAccountId($accountId)
+    public function setCategories(CategoriesGatewayInterface $categories)
     {
-        $this->accountId = (int) $accountId;
+        $this->categories = $categories;
 
         return $this;
     }
 
     /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = (float) preg_replace('/^[^\d-]+/', '', $amount);
-    }
-
-    /**
-     * @param integer $currencyId
+     * @param CounterpartiesGatewayInterface $counterparties
      *
      * @return $this
      */
-    public function setCurrencyId($currencyId)
+    public function setCounterparties(CounterpartiesGatewayInterface $counterparties)
     {
-        $this->currencyId = (int) $currencyId;
+        $this->counterparties = $counterparties;
 
         return $this;
     }
 
     /**
-     * @param integer $categoryId
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setCategoryId($categoryId)
-    {
-        $this->categoryId = (int) $categoryId;
-
-        return $this;
-    }
-
-    /**
-     * @param integer $counterpartyId
-     *
-     * @return $this
-     */
-    public function setCounterpartyId($counterpartyId)
-    {
-        $this->counterpartyId = (int) $counterpartyId;
-
-        return $this;
-    }
-
-    /**
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-        $account = $this->user->getAccounts()->findAccountById($this->accountId);
+        $account = $this->accounts->findAccountById($input['account_id']);
 
-        if (is_null($account)) {
+        if (is_null($account) || $account->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Account doesn't exist");
         }
 
-        if ($account->getCurrencyId() != $this->currencyId) {
-            throw new FeatureException("Currency is't supported by account");
+        if ($account->getCurrencyId() != $input['currency_id']) {
+            throw new FeatureException("Currency isn't supported by account");
         }
 
-        $category = $this->user->getCategories()->findCategoryById($this->categoryId);
+        $category = $this->categories->findCategoryById($input['category_id']);
 
-        if (is_null($category)) {
+        if (is_null($category) || $category->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Category doesn’t exist");
         }
 
-        $counterparty = $this->user->getCounterparties()->findCounterpartyById($this->counterpartyId);
+        $counterparty = $this->counterparties->findCounterpartyById($input['counterparty_id']);
 
-        if (is_null($counterparty)) {
+        if (is_null($counterparty) || $counterparty->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Counterparty doesn’t exist");
         }
 
-        if ($this->amount <= 0.0) {
+        if ((float) $input['amount'] <= 0.0) {
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $account->decreaseBalance($this->amount);
+        $account->decreaseBalance((float) $input['amount']);
 
-        $this->user->getAccounts()->updateAccounts($account);
+        $this->accounts->updateAccount($account);
+
+        return array();
     }
 }

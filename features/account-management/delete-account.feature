@@ -4,25 +4,42 @@ Feature: Delete Account
     I want to be able delete unused Accounts
 
     Scenario: I delete Account
-        Given I have Accounts:
-            | id  | name  | balance | currency_id |
-            | "1" | "Foo" | "0.00"  | "1"         |
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+
+        And there are Accounts:
+            | user_id | name  | balance | currency_id |
+            | "1"     | "Foo" | "0.00"  | "1"         |
+
+        And I am signed in as User with Id "1"
+
 
         When I delete Account "1"
-        Then My Accounts should be:
+
+        Then I should not receive any error
+
+        And Accounts should be:
             | id | name | balance | currency_id |
 
     Scenario Outline: I delete Account and provide invalid data
-        Given I have Accounts:
-            | id  | name  | balance | currency_id |
-            | "1" | "Foo" | "0.00"  | "1"         |
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+
+        And there are Accounts:
+            | id  | user_id | name  | balance | currency_id |
+            | "1" | "1"     | "Foo" | "0.00"  | "1"         |
+
+        And I am signed in as User with Id <user-id>
 
         When I delete Account <account-id>
         Then I should receive <error-message> error
-        And My Accounts should be:
-            | id  | name  | balance | currency_id |
-            | "1" | "Foo" | "0.00"  | "1"         |
+        And Accounts should be:
+            | id  | user_id | name  | balance | currency_id |
+            | "1" | "1"     | "Foo" | "0.00"  | "1"         |
 
     Examples:
-        | account-id | error-message           |
-        | "100500"   | "Account doesn't exist" |
+        | user-id  | account-id | error-message           |
+        | "1"      | "100500"   | "Account doesn't exist" |
+        | "100500" | "1"        | "Account doesn't exist" |

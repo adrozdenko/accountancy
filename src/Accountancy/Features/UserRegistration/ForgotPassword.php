@@ -6,8 +6,9 @@
 namespace Accountancy\Features\UserRegistration;
 
 use Accountancy\AuthenticationPayloadGeneratorInterface;
-use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\UsersGatewayInterface;
 use Accountancy\MailerInterface;
 
 /**
@@ -15,22 +16,12 @@ use Accountancy\MailerInterface;
  *
  * @package Accountancy\Features\UserRegistration
  */
-class ForgotPassword
+class ForgotPassword implements FeatureInterface
 {
     /**
-     * @var User
+     * @var UsersGatewayInterface
      */
-    protected $user;
-
-    /**
-     * @var UserCollection
-     */
-    protected $usersCollection;
-
-    /**
-     * @var string
-     */
-    protected $email;
+    protected $users;
 
     /**
      * @var MailerInterface
@@ -43,35 +34,15 @@ class ForgotPassword
     protected $authenticationPayloadGenerator;
 
     /**
-     * @param string $email
+     * @param \Accountancy\Gateway\UsersGatewayInterface $users
      *
      * @return $this
      */
-    public function setEmail($email)
+    public function setUsers(UsersGatewayInterface $users)
     {
-        $this->email = $email;
+        $this->users = $users;
 
         return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\Collection\UserCollection $usersCollection
-     *
-     * @return $this
-     */
-    public function setUsersCollection($usersCollection)
-    {
-        $this->usersCollection = $usersCollection;
-
-        return $this;
-    }
-
-    /**
-     * @return \Accountancy\Entity\User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 
     /**
@@ -98,20 +69,21 @@ class ForgotPassword
         return $this;
     }
 
-
-
     /**
      * Tries to find user by email address, creates authentication payload and sends a link to change password form
+     * @param Array $input
+     *
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        $this->user = $this->usersCollection->findUserByEmail($this->email);
+        $user = $this->users->findUserByEmail($input['email']);
 
-        if (!$this->user instanceof User) {
+        if (!$user instanceof User) {
             return;
         }
 
-        $this->user->setAuthenticationPayload($this->authenticationPayloadGenerator->generateAuthenticationPayload());
+        $user->setAuthenticationPayload($this->authenticationPayloadGenerator->generateAuthenticationPayload());
 
         $body = <<<EOF
 Dear%s,
@@ -120,10 +92,14 @@ Open https://example.com/change-password/%s in your browser to reset your passwo
 
 EOF;
         $greeting = "";
-        if (trim($this->user->getName()) !== "") {
-            $greeting = " " . trim($this->user->getName());
+        if (trim($user->getName()) !== "") {
+            $greeting = " " . trim($user->getName());
         }
 
-        $this->mailer->sendMail($this->user->getEmail(), "Password Reset", sprintf($body, $greeting, $this->user->getAuthenticationPayload()));
+        $this->mailer->sendMail($user->getEmail(), "Password Reset", sprintf($body, $greeting, $user->getAuthenticationPayload()));
+
+        $this->users->updateUser($user);
+
+        return array();
     }
 }

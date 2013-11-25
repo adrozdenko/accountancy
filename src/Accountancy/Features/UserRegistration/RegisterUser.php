@@ -6,9 +6,10 @@
 namespace Accountancy\Features\UserRegistration;
 
 use Accountancy\AuthenticationPayloadGeneratorInterface;
-use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\UsersGatewayInterface;
 use Accountancy\MailerInterface;
 
 /**
@@ -16,32 +17,12 @@ use Accountancy\MailerInterface;
  *
  * @package Accountancy\Features\UserRegistration
  */
-class RegisterUser
+class RegisterUser implements FeatureInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $email;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
     /**
      * @var MailerInterface
      */
     protected $mailer;
-
-    /**
-     * @var UserCollection
-     */
-    protected $userCollection;
 
     /**
      * @var AuthenticationPayloadGeneratorInterface
@@ -49,49 +30,18 @@ class RegisterUser
     protected $authenticationPayloadGenerator;
 
     /**
-     * @param string $email
-     *
-     * @return $this
+     * @var UsersGatewayInterface
      */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
+    protected $users;
 
     /**
-     * @param string $name
+     * @param \Accountancy\Gateway\UsersGatewayInterface $users
      *
      * @return $this
      */
-    public function setName($name)
+    public function setUsers(UsersGatewayInterface $users)
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @param string $password
-     *
-     * @return $this
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * @param \Accountancy\Entity\Collection\UserCollection $userCollection
-     *
-     * @return $this
-     */
-    public function setUserCollection($userCollection)
-    {
-        $this->userCollection = $userCollection;
+        $this->users = $users;
 
         return $this;
     }
@@ -120,30 +70,32 @@ class RegisterUser
         return $this;
     }
 
-
     /**
      * Registers new user
      *
+     * @param Array $input
+     *
      * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
             throw new FeatureException('Email address is invalid');
         }
 
-        if (trim($this->password) === "") {
+        if (trim($input['password']) === "") {
             throw new FeatureException('Password can not be empty');
         }
 
-        if (strlen(trim($this->password)) < 6) {
+        if (strlen(trim($input['password'])) < 6) {
             throw new FeatureException("Password should be at least 6 characters long");
         }
 
         $user = new User();
-        $user->setName($this->name);
-        $user->setEmail($this->email);
-        $user->setPassword($this->password);
+        $user->setName($input['name']);
+        $user->setEmail($input['email']);
+        $user->setPassword($input['password']);
         $user->setAuthenticationPayload($this->authenticationPayloadGenerator->generateAuthenticationPayload());
 
         $body = <<<EOF
@@ -163,6 +115,8 @@ EOF;
 
         $this->mailer->sendMail($user->getEmail(), "Welcome to Home Accountancy", sprintf($body, $greeting, $user->getAuthenticationPayload()));
 
-        $this->userCollection->addUser($user);
+        $this->users->addUser($user);
+
+        return array();
     }
 }

@@ -6,59 +6,55 @@
 namespace Accountancy\Features\CounterpartyManagement;
 
 
-use Accountancy\Entity\User;
+use Accountancy\Entity\Counterparty;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CounterpartiesGatewayInterface;
 
 /**
  * Class DeleteCounterparty
  *
  * @package Accountancy\Features\CounterpartyManagement
  */
-class DeleteCounterparty
+class DeleteCounterparty implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CounterpartiesGatewayInterface
      */
-    protected $user;
+    protected $counterparties;
 
     /**
-     * @var int
-     */
-    protected $counterpartyId;
-
-    /**
-     * @param int $counterpartyId
+     * @param \Accountancy\Gateway\CounterpartiesGatewayInterface $counterparties
      *
      * @return $this
      */
-    public function setCounterpartyId($counterpartyId)
+    public function setCounterparties(CounterpartiesGatewayInterface $counterparties)
     {
-        $this->counterpartyId = (int) $counterpartyId;
+        $this->counterparties = $counterparties;
 
         return $this;
     }
 
     /**
-     * @param \Accountancy\Entity\User $user
+     * @param Array $input
      *
-     * @return $this
+     * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function setUser($user)
+    public function run(Array $input)
     {
-        $this->user = $user;
+        $counterparty = $this->counterparties->findCounterpartyById($input['id']);
 
-        return $this;
-    }
-
-    /**
-     * @throws \Accountancy\Features\FeatureExceptions
-     */
-    public function run()
-    {
-        try {
-            $this->user->getCounterparties()->deleteCounterparty($this->counterpartyId);
-        } catch (\LogicException $e) {
+        if (!$counterparty instanceof Counterparty) {
             throw new FeatureException("Counterparty doesn't exit");
         }
+
+        if ($counterparty->getUserId() !== (int) $input['user_id']) {
+            throw new FeatureException("Counterparty doesn't exit");
+        }
+
+        $this->counterparties->deleteCounterparty($input['id']);
+
+        return array();
     }
 }
