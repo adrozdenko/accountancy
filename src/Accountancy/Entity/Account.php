@@ -119,7 +119,7 @@ class Account
      */
     public function increaseBalance($amount)
     {
-        $this->balance += $amount;
+        $this->balance = bcadd($this->balance, $amount, 2);
 
         return $this;
     }
@@ -131,7 +131,7 @@ class Account
      */
     public function decreaseBalance($amount)
     {
-        $this->balance -= $amount;
+        $this->balance = bcsub($this->balance, $amount, 2);
 
         return $this;
     }
