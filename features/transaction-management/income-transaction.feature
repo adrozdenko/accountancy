@@ -20,6 +20,24 @@ Feature: Register Income
             | id  | name  | balance | currency_id |
             | "1" | "Foo" | "20.00" | "1"         |
 
+
+    Scenario: I register float-edge negative Income Transaction
+        Given I have Accounts:
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "-30.00" | "1"         |
+        And I have Categories:
+            | id  | name  |
+            | "1" | "Bar" |
+        And I have Counterparties:
+            | id  | name  |
+            | "1" | "Baz" |
+
+        When I register "29.99" Income of currency "1" for Account "1" and Category "1" and Counterparty "1"
+
+        Then My Accounts should be:
+            | id  | name  | balance | currency_id |
+            | "1" | "Foo" | "-0.01" | "1"         |
+
     Scenario: I register Income Transaction to receive negative account balance
         Given I have Accounts:
             | id  | name  | balance  | currency_id |

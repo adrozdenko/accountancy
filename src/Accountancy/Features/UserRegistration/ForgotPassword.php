@@ -124,9 +124,6 @@ EOF;
             $greeting = " " . trim($this->user->getName());
         }
 
-        var_dump($this->user);
-
         $this->mailer->sendMail($this->user->getEmail(), "Password Reset", sprintf($body, $greeting, $this->user->getAuthenticationPayload()));
-
     }
 }

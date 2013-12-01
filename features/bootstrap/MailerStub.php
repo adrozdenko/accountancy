@@ -67,8 +67,6 @@ class MailerStub implements MailerInterface
         return $this->mailSent;
     }
 
-
-
     /**
      * @param string $to
      * @param string $title

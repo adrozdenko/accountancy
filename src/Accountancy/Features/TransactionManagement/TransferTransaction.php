@@ -77,7 +77,7 @@ class TransferTransaction
      */
     public function setAmount($amount)
     {
-        $this->amount = (float) $amount;
+        $this->amount = (float) preg_replace('/^[^\d-]+/', '', $amount);
     }
 
     /**

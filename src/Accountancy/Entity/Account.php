@@ -39,7 +39,7 @@ class Account
      */
     public function setBalance($balance)
     {
-        $this->balance = $balance;
+        $this->balance = (float) preg_replace('/^[^\d-]+/', '', $balance);
 
         return $this;
     }
