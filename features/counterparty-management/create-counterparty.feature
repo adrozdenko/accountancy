@@ -3,27 +3,36 @@ Feature: Create Counterparty
     As a User
     I want to be able to create Counterparties
 
+    Background:
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+
+        And there are Counterparties:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+
+        And I am signed in as User with Id "1"
+
     Scenario: I create Counterparty
-        Given I have Counterparties:
-            | id | name |
 
-        When I create Counterparty with Name "Foo"
+        When I create Counterparty with Name "Bar"
 
-        Then my Counterparties should be:
-            | name  |
-            | "Foo" |
+        Then I should not receive any error
+
+        And Counterparties should be:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+            | "2" | "1"     | "Bar" |
 
     Scenario Outline: I create Counterparty with invalid data
-        Given I have Counterparties:
-            | id  | name  |
-            | "1" | "Foo" |
-
         When I create Counterparty with Name <name>
 
         Then I should receive <error-message> error
-        And my Counterparties should be:
-            | id  | name  |
-            | "1" | "Foo" |
+
+        And Counterparties should be:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
 
     Examples:
         | name  | error-message                           |

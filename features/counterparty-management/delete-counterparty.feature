@@ -3,26 +3,39 @@ Feature: Delete Counterparty
     As a User
     I want to be able to delete unused Counterparty
 
-    Scenario: I delete Counterparty
-        Given I have Counterparties:
-            | id  | name  |
-            | "1" | "Foo" |
+    Background:
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+            | "2" | "bar@example.com"  | "bar"  |
 
+        And there are Counterparties:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+            | "2" | "2"     | "Bar" |
+
+        And I am signed in as User with Id "1"
+
+    Scenario: I delete Counterparty
         When I delete Counterparty "1"
-        Then my Counterparties should be:
-            | id | name |
+
+        Then I should not receive any error
+
+        And Counterparties should be:
+            | id  | user_id | name  |
+            | "2" | "2"     | "Bar" |
 
     Scenario Outline: I delete Counterparty and provide invalid data
-        Given I have Counterparties:
-            | id  | name  |
-            | "1" | "Foo" |
-
         When I delete Counterparty <counterparty-id>
+
         Then I should receive <error-message> error
-        And my Counterparties should be:
-            | id  | name  |
-            | "1" | "Foo" |
+
+        And Counterparties should be:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+            | "2" | "2"     | "Bar" |
 
     Examples:
         | counterparty-id | error-message               |
         | "100500"        | "Counterparty doesn't exit" |
+        | "2"             | "Counterparty doesn't exit" |

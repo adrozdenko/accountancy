@@ -3,41 +3,30 @@ Feature: Change Password
     As a User
     I want to be able to change it
 
-    Scenario: User changes password
+    Background:
         Given there are registered Users:
             | id  | email             | password |
             | "1" | "foo@example.com" | "foo"    |
 
-        And I am a User with the following properties:
-            | id  | email             | password | is_authenticated |
-            | "1" | "foo@example.com" | "foo"    | "true"           |
+        And I am signed in as User with Id "1"
 
+    Scenario: User changes password
         When I change my password to "barbar"
 
-        Then I become a User with the following properties:
-            | id  | email             | password | is_authenticated |
-            | "1" | "foo@example.com" | "barbar" | "true"           |
+        Then I should not receive any error
+
+        And I become signed in User with Id "1"
 
         And registered Users should be:
             | id  | email             | password |
             | "1" | "foo@example.com" | "barbar" |
 
-
     Scenario Outline:
-        Given there are registered Users:
-            | id  | email             | password |
-            | "1" | "foo@example.com" | "foo"    |
-
-        And I am a User with the following properties:
-            | id  | email             | password | is_authenticated |
-            | "1" | "foo@example.com" | "foo"    | "true"           |
-
         When I change my password to <new-password>
 
         Then I should receive <error-message> error
-        And I become a User with the following properties:
-            | id  | email             | password | is_authenticated |
-            | "1" | "foo@example.com" | "foo"    | "true"           |
+
+        And I become signed in User with Id "1"
 
         And registered Users should be:
             | id  | email             | password |

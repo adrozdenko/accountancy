@@ -18,6 +18,11 @@ class Counterparty
     protected $id;
 
     /**
+     * @var integer
+     */
+    protected $userId;
+
+    /**
      * @var string
      */
     protected $name;
@@ -60,5 +65,25 @@ class Counterparty
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param int $userId
+     *
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = (int) $userId;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 }

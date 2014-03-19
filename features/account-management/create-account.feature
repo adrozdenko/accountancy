@@ -4,24 +4,36 @@ Feature: Create Account
     I want to be able to create Accounts
 
     Scenario: I create Account
-        Given I have Accounts:
-            | id | name | balance | currency_id |
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+
+        And there are Accounts:
+            | user_id | name  | balance | currency_id |
 
         And There are Currencies:
             | id  |
             | "1" |
             | "2" |
 
+        And I am signed in as User with Id "1"
+
         When I create Account with Name "Foo" and Currency "1"
 
-        Then My Accounts should be:
-            | name  | balance | currency_id |
-            | "Foo" | "0.00"  | "1"         |
+        Then I should not receive any error
+        And Accounts should be:
+            | user_id | name  | balance | currency_id |
+            | "1"     | "Foo" | "0.00"  | "1"         |
 
     Scenario Outline: I create Account with invalid input
-        Given I have Accounts:
-            | id  | name  | balance | currency_id |
-            | "1" | "Foo" | "0.00"  | "1"         |
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
+
+        And there are Accounts:
+            | user_id | id  | name  | balance | currency_id |
+            | "1"     | "1" | "Foo" | "0.00"  | "1"         |
+        And I am signed in as User with Id "1"
 
         And There are Currencies:
             | id  |
@@ -31,9 +43,9 @@ Feature: Create Account
         When I create Account with Name <account-name> and Currency <currency-id>
 
         Then I should receive <error-message> error
-        And My Accounts should be:
-            | name  | balance | currency_id |
-            | "Foo" | "0.00"  | "1"         |
+        And Accounts should be:
+            | user_id | name  | balance | currency_id |
+            | "1"     | "Foo" | "0.00"  | "1"         |
 
         Examples:
             | account-name | currency-id | error-message                      |

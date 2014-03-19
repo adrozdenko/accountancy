@@ -5,110 +5,68 @@
 
 namespace Accountancy\Features\TransactionManagement;
 
-use Accountancy\Entity\Category;
-use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\AccountsGatewayInterface;
 
 /**
  * Class TransferTransaction
  *
  * @package Accountancy\Features\TransactionManagement
  */
-class TransferTransaction
+class TransferTransaction implements FeatureInterface
 {
     /**
-     * @var User
+     * @var AccountsGatewayInterface
      */
-    protected $user;
+    protected $accounts;
 
     /**
-     * @var integer
-     */
-    protected $fromAccountId;
-
-    /**
-     * @var integer
-     */
-    protected $toAccountId;
-
-    /**
-     * @var float
-     */
-    protected $amount = 0.0;
-
-    /**
-     * @param \Accountancy\Entity\User $user
+     * @param \Accountancy\Gateway\AccountsGatewayInterface $accounts
      *
      * @return $this
      */
-    public function setUser(User $user)
+    public function setAccounts(AccountsGatewayInterface $accounts)
     {
-        $this->user = $user;
+        $this->accounts = $accounts;
 
         return $this;
     }
 
     /**
-     * @param integer $fromAccountId
+     * @param Array $input
      *
-     * @return $this
-     */
-    public function setFromAccountId($fromAccountId)
-    {
-        $this->fromAccountId = (int) $fromAccountId;
-
-        return $this;
-    }
-
-    /**
-     * @param integer $toAccountId
-     *
-     * @return $this
-     */
-    public function setToAccountId($toAccountId)
-    {
-        $this->toAccountId = (int) $toAccountId;
-
-        return $this;
-    }
-
-    /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = (float) preg_replace('/^[^\d-]+/', '', $amount);
-    }
-
-    /**
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-        $toAccount = $this->user->getAccounts()->findAccountById($this->toAccountId);
+        $toAccount = $this->accounts->findAccountById($input['to_account_id']);
 
-        if (is_null($toAccount)) {
+        if (is_null($toAccount) || $toAccount->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Target account doesn't exist");
         }
 
-        $fromAccount = $this->user->getAccounts()->findAccountById($this->fromAccountId);
+        $fromAccount = $this->accounts->findAccountById($input['from_account_id']);
 
-        if (is_null($fromAccount)) {
+        if (is_null($fromAccount) || $fromAccount->getUserId() !== (int) $input['user_id']) {
             throw new FeatureException("Source account doesn't exist");
         }
 
         if ($toAccount->getCurrencyId() != $fromAccount->getCurrencyId()) {
-            throw new FeatureException("Currency is't supported by target account");
+            throw new FeatureException("Currency isn't supported by target account");
         }
 
-        if ($this->amount <= 0.0) {
+        if ((float) $input['amount'] <= 0.0) {
             throw new FeatureException("Amount of money should be greater than zero");
         }
 
-        $fromAccount->decreaseBalance($this->amount);
-        $this->user->getAccounts()->updateAccounts($fromAccount);
+        $fromAccount->decreaseBalance((float) $input['amount']);
+        $this->accounts->updateAccount($fromAccount);
 
-        $toAccount->increaseBalance($this->amount);
-        $this->user->getAccounts()->updateAccounts($toAccount);
+        $toAccount->increaseBalance((float) $input['amount']);
+        $this->accounts->updateAccount($toAccount);
+
+        return array();
     }
 }

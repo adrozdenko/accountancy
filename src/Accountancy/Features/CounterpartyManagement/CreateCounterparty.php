@@ -7,67 +7,57 @@
 
 namespace Accountancy\Features\CounterpartyManagement;
 
-use Accountancy\Entity\User;
 use Accountancy\Entity\Counterparty;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\CounterpartiesGatewayInterface;
 
 /**
  * Class CreateCounterparty
  *
  * @package Accountancy\Features\AccountManagement
  */
-class CreateCounterparty
+class CreateCounterparty implements FeatureInterface
 {
     /**
-     * @var User
+     * @var CounterpartiesGatewayInterface
      */
-    protected $user;
+    protected $counterparties;
 
     /**
-     * @var String
-     */
-    protected $counterpartyName;
-
-     /**
-     * @param \Accountancy\Entity\User $user
-     *
-     * @return CreateCounterparty
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @param string $counterpartyName
+     * @param \Accountancy\Gateway\CounterpartiesGatewayInterface $counterparties
      *
      * @return $this
      */
-    public function setCounterpartyName($counterpartyName)
+    public function setCounterparties(CounterpartiesGatewayInterface $counterparties)
     {
-        $this->counterpartyName = $counterpartyName;
+        $this->counterparties = $counterparties;
 
         return $this;
     }
 
     /**
+     * @param Array $input
+     *
+     * @return Array
      * @throws \Accountancy\Features\FeatureException
      */
-    public function run()
+    public function run(Array $input)
     {
-        if (trim($this->counterpartyName) === "") {
+        if (trim($input['name']) === "") {
             throw new FeatureException("Name of Counterparty can not be empty");
         }
 
-        if ($this->user->getCounterparties()->findCounterpartyByName($this->counterpartyName) instanceof Counterparty) {
-            throw new FeatureException(sprintf("Counterparty '%s' already exists", $this->counterpartyName));
+        if ($this->counterparties->findCounterpartyByUserIdAndName($input['user_id'], $input['name']) instanceof Counterparty) {
+            throw new FeatureException(sprintf("Counterparty '%s' already exists", $input['name']));
         }
 
         $counterparty = new Counterparty;
-        $counterparty->setName($this->counterpartyName);
+        $counterparty->setName($input['name']);
+        $counterparty->setUserId($input['user_id']);
 
-        $this->user->getCounterparties()->addCounterparty($counterparty);
+        $this->counterparties->addCounterparty($counterparty);
+
+        return array();
     }
 }

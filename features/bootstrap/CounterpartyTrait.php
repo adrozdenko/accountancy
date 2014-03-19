@@ -9,21 +9,43 @@ use Accountancy\Features\CounterpartyManagement\EditCounterparty;
 use Accountancy\Features\CounterpartyManagement\DeleteCounterparty;
 use Accountancy\Features\CounterpartyManagement\CreateCounterparty;
 use Accountancy\Entity\Counterparty;
+use Accountancy\Gateway\CounterpartiesGatewayInterface;
+use Accountancy\Gateway\InMemory\CounterpartiesGateway;
 use Behat\Gherkin\Node\TableNode;
 
 trait CounterpartyTrait
 {
     /**
+     * @var CounterpartiesGatewayInterface
+     */
+    private $counterparties;
+
+    /**
+     * @return CounterpartiesGatewayInterface
+     */
+    public function getCounterpartiesGateway()
+    {
+        if ($this->counterparties === null) {
+            $this->counterparties = new CounterpartiesGateway();
+        }
+
+        return $this->counterparties;
+    }
+
+    /**
      * @param TableNode $counterpartiesTable
      *
-     * @Given /^I have Counterparties:$/
+     * @Given /^there are Counterparties:$/
      */
-    public function iHaveCounterparties(TableNode $counterpartiesTable)
+    public function thereAreCounterparties(TableNode $counterpartiesTable)
     {
         foreach ($counterpartiesTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
+
+            $user = $this->getUsersGateway()->findUserById($row['user_id']);
+            assertInstanceOf('\\Accountancy\\Entity\\User', $user, sprintf("Counterparties should match to registered users, user '%s' not found", $row['user_id']));
 
             $counterparty = new Counterparty();
 
@@ -31,12 +53,18 @@ trait CounterpartyTrait
                 $counterparty->setId($row['id']);
             }
 
+            if (isset($row['user_id'])) {
+                $counterparty->setUserId($row['user_id']);
+            }
+
             if (isset($row['name'])) {
                 $counterparty->setName($row['name']);
             }
 
-            $this->user->getCounterparties()->addCounterparty($counterparty);
+            $this->getCounterpartiesGateway()->addCounterparty($counterparty);
         }
+
+
     }
 
     /**
@@ -47,11 +75,13 @@ trait CounterpartyTrait
     public function iCreateCounterpartyWithName($name)
     {
         $feature = new CreateCounterparty();
-        $feature->setUser($this->user)
-            ->setCounterpartyName($name);
+        $feature->setCounterparties($this->getCounterpartiesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'name' => $name,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -60,37 +90,32 @@ trait CounterpartyTrait
     /**
      * @param TableNode $counterpartiesTable
      *
-     * @Then /^my Counterparties should be:$/
+     * @Then /^Counterparties should be:$/
      */
-    public function myCounterpartiesShouldBe(TableNode $counterpartiesTable)
+    public function counterpartiesShouldBe(TableNode $counterpartiesTable)
     {
-        $counterpartiesByName = array();
-        foreach ($this->user->getCounterparties()->getCounterparties() as $counterparty) {
-            $counterpartiesByName[$counterparty->getName()] = $counterparty;
-        }
-
         foreach ($counterpartiesTable->getHash() as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = substr($value, 1, -1);
             }
 
-            assertArrayHasKey("name", $row, "'name' field must be present in 'My Counterparties should be' table");
-            assertArrayHasKey($row['name'], $counterpartiesByName, sprintf("Counterparty with name '%s' doesn't exist", $row['name']));
-            $counterparty = $counterpartiesByName[$row['name']];
-
+            assertArrayHasKey("name", $row, "'name' field must be present in 'Counterparties should be' table");
+            assertArrayHasKey("user_id", $row, "'user_id' field must be present in 'Counterparties should be' table");
+            $counterparty = $this->getCounterpartiesGateway()->findCounterpartyByUserIdAndName($row['user_id'], $row['name']);
+            assertInstanceOf("\\Accountancy\\Entity\\Counterparty", $counterparty, sprintf("Counterparty with name '%s' doesn't exist", $row['name']));
 
             if (isset($row['id'])) {
                 assertEquals($row['id'], $counterparty->getId(), sprintf("Id does not match for counterparty '%s'", $row['name']));
+            }
+
+            if (isset($row['user_id'])) {
+                assertEquals($row['user_id'], $counterparty->getUserId(), sprintf("userId does not match for category '%s'", $row['name']));
             }
 
             if (isset($row['name'])) {
                 assertEquals($row['name'], $counterparty->getName(), sprintf("Name does not match for counterparty '%s'", $row['name']));
             }
         }
-
-        $expected = count($counterpartiesTable->getHash());
-        $actual = count($counterpartiesByName);
-        assertEquals($expected, $actual, sprintf("Expected %s counterparties, got %s", $expected, $actual));
     }
 
     /**
@@ -101,11 +126,13 @@ trait CounterpartyTrait
     public function iDeleteCounterparty($counterpartyId)
     {
         $feature = new DeleteCounterparty();
-        $feature->setUser($this->user)
-            ->setCounterpartyId($counterpartyId);
+        $feature->setCounterparties($this->getCounterpartiesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $counterpartyId,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }
@@ -120,12 +147,14 @@ trait CounterpartyTrait
     public function iEditCounterpartySetName($counterpartyId, $name)
     {
         $feature = new EditCounterparty();
-        $feature->setUser($this->user)
-            ->setCounterpartyId($counterpartyId)
-            ->setNewCounterpartyName($name);
+        $feature->setCounterparties($this->getCounterpartiesGateway());
 
         try {
-            $feature->run();
+            $output = $feature->run(array(
+                'user_id' => $this->signedInUserId,
+                'id' => $counterpartyId,
+                'name' => $name,
+            ));
         } catch (\Exception $e) {
             $this->lastException = $e;
         }

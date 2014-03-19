@@ -3,27 +3,39 @@ Feature: Create Category
     As User
     I want to be able create categories
 
-    Scenario: I create Category
-        Given I have Categories:
-            | id | name |
+    Background:
+        Given there are registered Users:
+            | id  | email              | name   |
+            | "1" | "foo@example.com"  | "foo"  |
 
-        When I create Category "Foo"
-        Then My Categories should be:
-            | name  |
-            | "Foo" |
+        And there are Categories:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+
+        And I am signed in as User with Id "1"
+
+    Scenario: I create Category
+        When I create Category "Bar"
+
+        Then I should not receive any error
+
+        And Categories should be:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
+            | "2" | "1"     | "Bar" |
 
     Scenario Outline: I create invalid Category
-        Given I have Categories:
-            | id  | name  |
-            | "1" | "Zoo" |
+
         When I create Category <category-name>
+
         Then I should receive <error-message> error
-        And My Categories should be:
-            | id  | name  |
-            | "1" | "Zoo" |
+
+        And Categories should be:
+            | id  | user_id | name  |
+            | "1" | "1"     | "Foo" |
 
     Examples:
         | category-name | error-message                    |
-        | "Zoo"         | "Category 'Zoo' already exists"  |
+        | "Foo"         | "Category 'Foo' already exists"  |
         | ""            | "Category name can not be empty" |
         | "  "          | "Category name can not be empty" |

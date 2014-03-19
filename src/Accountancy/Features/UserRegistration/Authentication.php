@@ -5,83 +5,31 @@
 
 namespace Accountancy\Features\UserRegistration;
 
-
-use Accountancy\Entity\Collection\UserCollection;
 use Accountancy\Entity\User;
 use Accountancy\Features\FeatureException;
+use Accountancy\Features\FeatureInterface;
+use Accountancy\Gateway\UsersGatewayInterface;
 
 /**
  * Class Authentication
  *
  * @package Accountancy\Features\UserRegistration
  */
-class Authentication
+class Authentication implements FeatureInterface
 {
     /**
-     * @var string
+     * @var UsersGatewayInterface
      */
-    protected $email;
+    protected $users;
 
     /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @var UserCollection
-     */
-    protected $userCollection;
-
-    /**
-     * @var User
-     */
-    protected $user;
-
-    /**
-     * @var string
-     */
-    protected $authenticationPayload;
-
-    /**
-     * @return \Accountancy\Entity\User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param \Accountancy\Entity\Collection\UserCollection $userCollection
+     * @param \Accountancy\Gateway\UsersGatewayInterface $users
      *
      * @return $this
      */
-    public function setUserCollection($userCollection)
+    public function setUsers(UsersGatewayInterface $users)
     {
-        $this->userCollection = $userCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param string $email
-     *
-     * @return $this
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * @param string $password
-     *
-     * @return $this
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
+        $this->users = $users;
 
         return $this;
     }
@@ -96,42 +44,51 @@ class Authentication
 
     /**
      * Performs authentication by email/password or authentication payload
+     *
+     * @param Array $input
+     *
+     * @throws \LogicException
+     * @throws \Accountancy\Features\FeatureException
+     * @return Array
      */
-    public function run()
+    public function run(Array $input)
     {
-        if ($this->email !== null && $this->password !== null) {
-            $this->user = $this->userCollection->findUserByEmailAndPassword($this->email, $this->password);
+        if (isset($input['email']) && isset($input['password'])) {
+            $user = $this->users->findUserByEmailAndPassword($input['email'], $input['password']);
 
-            if (!$this->user instanceof User) {
+            if (!$user instanceof User) {
                 throw new FeatureException("Invalid email or password");
             }
 
-            if (!$this->user->isEmailVerified()) {
-                $this->user = null;
+            if (!$user->isEmailVerified()) {
+                $user = null;
                 throw new FeatureException("Your email address has not yet been verified. Please check your email and follow the URL provided in it.");
             }
 
-            $this->user->setAuthenticated(true);
-
-            return;
+            return array(
+                'signed_in_user_id' => $user->getId(),
+            );
         }
 
-        if ($this->authenticationPayload !== null) {
-            if (trim($this->authenticationPayload) === "") {
+        if (isset($input['authentication_payload'])) {
+            if (trim($input['authentication_payload']) === "") {
                 throw new FeatureException("Verification code is not valid");
             }
 
-            $this->user = $this->userCollection->findUserByAuthenticationPayload($this->authenticationPayload);
+            $user = $this->users->findUserByAuthenticationPayload($input['authentication_payload']);
 
-            if (!$this->user instanceof User) {
+            if (!$user instanceof User) {
                 throw new FeatureException("Verification code is not valid");
             }
 
-            $this->user->setAuthenticationPayload("");
-            $this->user->setEmailVerified(true);
-            $this->user->setAuthenticated(true);
+            $user->setAuthenticationPayload("");
+            $user->setEmailVerified(true);
 
-            return;
+            $this->users->updateUser($user);
+
+            return array(
+                'signed_in_user_id' => $user->getId(),
+            );
         }
 
         throw new \LogicException("Either authentication payload or email and password should be set");
